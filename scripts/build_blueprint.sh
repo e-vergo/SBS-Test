@@ -27,6 +27,10 @@ SUBVERSO_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/subverso"
 LEAN_ARCHITECT_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/LeanArchitect"
 DRESS_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/Dress"
 RUNWAY_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/Runway"
+SBSTest_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test"
+SIDE_BY_SIDE_BLUEPRINT_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint"
+
+
 
 echo "=== SBS-Test Blueprint Builder ==="
 echo ""
@@ -80,6 +84,8 @@ commit_and_push "$SUBVERSO_PATH"
 commit_and_push "$LEAN_ARCHITECT_PATH"
 commit_and_push "$DRESS_PATH"
 commit_and_push "$RUNWAY_PATH"
+commit_and_push "$SBSTest_PATH"
+commit_and_push "$SIDE_BY_SIDE_BLUEPRINT_PATH"
 
 cd "$PROJECT_ROOT"
 

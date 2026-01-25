@@ -51,6 +51,39 @@ for path in "$SUBVERSO_PATH" "$LEAN_ARCHITECT_PATH" "$DRESS_PATH" "$RUNWAY_PATH"
 done
 
 echo ""
+echo "=== Step 0: Committing and pushing dependency changes ==="
+
+# Function to commit and push changes in a repo
+commit_and_push() {
+    local repo_path="$1"
+    local repo_name="$(basename "$repo_path")"
+
+    cd "$repo_path"
+
+    # Check if there are any changes to commit
+    if [[ -n $(git status --porcelain) ]]; then
+        echo "  $repo_name: Committing changes..."
+        git add -A
+        git commit -m "Auto-commit from build_blueprint.sh
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+        echo "  $repo_name: Pushing..."
+        git push
+        echo "  $repo_name: Done. Waiting 2 seconds..."
+        sleep 2
+    else
+        echo "  $repo_name: No changes to commit"
+    fi
+}
+
+commit_and_push "$SUBVERSO_PATH"
+commit_and_push "$LEAN_ARCHITECT_PATH"
+commit_and_push "$DRESS_PATH"
+commit_and_push "$RUNWAY_PATH"
+
+cd "$PROJECT_ROOT"
+
+echo ""
 echo "=== Step 1: Building local dependency forks ==="
 
 # Build order: SubVerso -> LeanArchitect -> Dress -> Runway (respects dependency chain)

@@ -5,6 +5,7 @@ Tests: @[blueprint] attribute, definitions, term mode proofs
 import Dress
 import Mathlib.Algebra.Group.Basic
 import Mathlib.Data.Nat.Basic
+import Mathlib.Tactic
 
 namespace SBSTest.Chapter1
 

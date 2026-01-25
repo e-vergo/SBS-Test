@@ -1,0 +1,8 @@
+{
+  "title": "SBS-Test: Blueprint Feature Demonstration",
+  "projectName": "SBSTest",
+  "githubUrl": "https://github.com/e-vergo/SBS-Test",
+  "baseUrl": "/SBS-Test/",
+  "docgen4Url": null,
+  "blueprintTexPath": "blueprint/src/blueprint.tex"
+}

@@ -1,0 +1,74 @@
+\documentclass{article}
+
+\input{../../.lake/build/dressed/library/SBSTest.tex}
+
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\title{SBS-Test: Blueprint Feature Demonstration}
+\author{Side-By-Side Blueprint Project}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+
+\begin{document}
+\maketitle
+
+\chapter{Introduction}
+
+This project demonstrates all features of the Side-by-Side Blueprint pipeline:
+\begin{itemize}
+\item Syntax-highlighted Lean code with hover tooltips
+\item Token binding highlights
+\item Proof toggle synchronization
+\item Multi-chapter generation
+\item Homepage statistics
+\item Dependency graph
+\item Chapter navigation
+\end{itemize}
+
+\chapter{Basic Definitions and Lemmas}
+
+This chapter introduces basic definitions and proves simple lemmas about positivity.
+
+\section{Definitions}
+
+\inputleannode{def:is-positive}
+\inputleannode{def:double}
+
+\section{Basic Results}
+
+\inputleannode{thm:succ-positive}
+\inputleannode{lem:double-positive}
+\inputleannode{lem:add-positive}
+\inputleannode{lem:max-positive}
+
+\chapter{Integer Theorems}
+
+This chapter covers results about integers and algebraic identities.
+
+\inputleannode{thm:square-nonneg}
+\inputleannode{thm:sum-squares-nonneg}
+\inputleannode{thm:binomial-square}
+
+\chapter{Advanced Topics}
+
+This chapter combines results from previous chapters and proves facts about primes.
+
+\section{Prime Numbers}
+
+\inputleannode{thm:two-prime}
+\inputleannode{thm:three-prime}
+\inputleannode{thm:odd-prime}
+
+\section{Combined Results}
+
+\inputleannode{cor:double-succ-positive}
+
+\end{document}

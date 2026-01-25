@@ -31,8 +31,7 @@ theorem three_prime : Nat.Prime 3 := Nat.prime_three
   (proof := /-- By contradiction: if $p$ is even, then $2 \mid p$, so $p = 2$. -/)]
 theorem odd_prime (p : ℕ) (hp : Nat.Prime p) (hp2 : p > 2) : Odd p := by
   by_contra h
-  push_neg at h
-  rw [Nat.even_iff] at h
+  rw [Nat.not_odd_iff_even, Nat.even_iff] at h
   have hdvd : 2 ∣ p := ⟨p / 2, by omega⟩
   have := hp.eq_one_or_self_of_dvd 2 hdvd
   omega

@@ -18,6 +18,7 @@ def isPositive (n : ℕ) : Prop := n > 0
 @[blueprint "thm:succ-positive"
   (statement := /-- For any $n \in \mathbb{N}$, $n + 1 > 0$.
   \uses{def:is-positive} -/)
+  (uses := ["def:is-positive"])
   (proof := /-- Direct application of successor properties. -/)]
 theorem succ_positive (n : ℕ) : isPositive (n + 1) := Nat.succ_pos n
 
@@ -30,6 +31,7 @@ def double (n : ℕ) : ℕ := 2 * n
 @[blueprint "lem:double-positive"
   (statement := /-- If $n > 0$, then $2n > 0$.
   \uses{def:is-positive, def:double} -/)
+  (uses := ["def:is-positive", "def:double"])
   (proof := /-- Multiplication by 2 preserves positivity. -/)]
 lemma double_positive (n : ℕ) (h : isPositive n) : isPositive (double n) :=
   Nat.mul_pos (by norm_num : 0 < 2) h

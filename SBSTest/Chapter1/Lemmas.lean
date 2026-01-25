@@ -12,6 +12,7 @@ namespace SBSTest.Chapter1
 @[blueprint "lem:add-positive"
   (statement := /-- If $m > 0$ and $n > 0$, then $m + n > 0$.
   \uses{def:is-positive} -/)
+  (uses := ["def:is-positive"])
   (proof := /-- By cases and arithmetic. -/)]
 lemma add_positive (m n : ℕ) (hm : isPositive m) (hn : isPositive n) :
     isPositive (m + n) := by
@@ -22,6 +23,7 @@ lemma add_positive (m n : ℕ) (hm : isPositive m) (hn : isPositive n) :
 @[blueprint "lem:max-positive"
   (statement := /-- If $m > 0$ or $n > 0$, then $\max(m, n) > 0$.
   \uses{def:is-positive} -/)
+  (uses := ["def:is-positive"])
   (proof := /-- Case analysis on which argument provides positivity. -/)]
 lemma max_positive (m n : ℕ) (h : isPositive m ∨ isPositive n) :
     isPositive (max m n) := by

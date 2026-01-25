@@ -20,6 +20,7 @@ theorem square_nonneg (x : ℤ) : 0 ≤ x ^ 2 := sq_nonneg x
 @[blueprint "thm:sum-squares-nonneg"
   (statement := /-- For any $x, y \in \mathbb{Z}$, we have $x^2 + y^2 \geq 0$.
   \uses{thm:square-nonneg} -/)
+  (uses := ["thm:square-nonneg"])
   (proof := /-- Both terms are non-negative by \texttt{square\_nonneg}. -/)]
 theorem sum_squares_nonneg (x y : ℤ) : 0 ≤ x ^ 2 + y ^ 2 := by
   have h1 := square_nonneg x

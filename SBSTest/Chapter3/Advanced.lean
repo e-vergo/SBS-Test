@@ -28,6 +28,7 @@ theorem three_prime : Nat.Prime 3 := Nat.prime_three
 @[blueprint "thm:odd-prime"
   (statement := /-- If $p > 2$ is prime, then $p$ is odd.
   \uses{thm:two-prime} -/)
+  (uses := ["thm:two-prime"])
   (proof := /-- By contradiction: if $p$ is even, then $2 \mid p$, so $p = 2$. -/)]
 theorem odd_prime (p : ℕ) (hp : Nat.Prime p) (hp2 : p > 2) : Odd p := by
   by_contra h
@@ -40,6 +41,7 @@ theorem odd_prime (p : ℕ) (hp : Nat.Prime p) (hp2 : p > 2) : Odd p := by
 @[blueprint "cor:double-succ-positive"
   (statement := /-- For any $n$, $2(n+1) > 0$.
   \uses{thm:succ-positive, lem:double-positive} -/)
+  (uses := ["thm:succ-positive", "lem:double-positive"])
   (proof := /-- Combine successor positivity with doubling preservation. -/)]
 theorem double_succ_positive (n : ℕ) : isPositive (double (n + 1)) :=
   double_positive (n + 1) (succ_positive n)

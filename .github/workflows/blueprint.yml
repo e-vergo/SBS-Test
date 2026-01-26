@@ -30,18 +30,36 @@ jobs:
           docker-images: false
           swap-storage: false
 
-      - uses: actions/checkout@v4
+      # Check out SBS-Test and sibling repos (Dress, Runway)
+      - name: Checkout SBS-Test
+        uses: actions/checkout@v4
         with:
+          path: SBS-Test
           fetch-depth: 0
+
+      - name: Checkout Dress
+        uses: actions/checkout@v4
+        with:
+          repository: e-vergo/Dress
+          path: Dress
+          ref: main
+
+      - name: Checkout Runway
+        uses: actions/checkout@v4
+        with:
+          repository: e-vergo/Runway
+          path: Runway
+          ref: main
 
       - name: Cache Lake packages
         uses: actions/cache@v4
         with:
           path: |
             ~/.elan
-            .lake/packages
-            .lake/build
-          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
+            SBS-Test/.lake
+            Dress/.lake
+            Runway/.lake
+          key: lake-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
           restore-keys: |
             lake-${{ runner.os }}-
 
@@ -50,22 +68,51 @@ jobs:
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
-      - name: Build blueprint with Dress
-        uses: e-vergo/dress-blueprint-action@main
+      - name: Fetch mathlib cache
+        working-directory: SBS-Test
+        run: lake exe cache get || echo "::warning::Cache fetch completed with some skipped files"
+
+      - name: Build Dress
+        working-directory: Dress
+        run: lake build
+
+      - name: Build Runway
+        working-directory: Runway
+        run: lake build
+
+      - name: Build SBS-Test with dressed artifacts
+        working-directory: SBS-Test
+        run: |
+          mkdir -p .lake/build
+          echo "1" > .lake/build/.dress
+          lake build
+          rm -f .lake/build/.dress
+
+      - name: Build blueprint facet
+        working-directory: SBS-Test
+        run: lake build :blueprint
+
+      - name: Generate dependency graph
+        working-directory: SBS-Test
+        run: |
+          lake env ../Dress/.lake/build/bin/extract_blueprint graph \
+            --build .lake/build \
+            SBSTest
+
+      - name: Generate site with Runway
+        working-directory: SBS-Test
+        run: |
+          mkdir -p .lake/build/runway
+          cd ../Runway && lake exe runway \
+            --build-dir ../SBS-Test/.lake/build \
+            --output ../SBS-Test/.lake/build/runway \
+            build \
+            ../SBS-Test/runway.json
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          build-dressed: true
-          blueprint-facet: true
-          use-runway: true
-          runway-target: "SBSTest:runway"
-          build-pdf: false
-          build-web: false
-          check-decls: false
-          lake-package-directory: "."
-          blueprint-directory: "blueprint"
-          deploy-pages: true
-          output-directory: "_site"
-          use-mathlib-cache: true
-          clean-dressed: false
+          path: SBS-Test/.lake/build/runway
 
   deploy:
     needs: build

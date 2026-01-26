@@ -51,12 +51,14 @@ jobs:
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
       - name: Build blueprint with Dress
-        uses: e-vergo/dress-blueprint-action@v1
+        uses: e-vergo/dress-blueprint-action@main
         with:
           build-dressed: true
           blueprint-facet: true
-          build-pdf: true
-          build-web: true
+          use-runway: true
+          runway-target: "SBSTest:runway"
+          build-pdf: false
+          build-web: false
           check-decls: false
           lake-package-directory: "."
           blueprint-directory: "blueprint"

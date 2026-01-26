@@ -99,8 +99,10 @@ theorem even_times_any (a b : Nat) (ha : Even a) : Even (a * b) := by
   obtain ⟨k, hk⟩ := ha
   exact ⟨k * b, by rw [hk]; ring⟩
 
-/-- Zero is even - a simple standalone proven theorem. -/
-@[blueprint "thm:zero-even"
+/-- Zero is even - a simple standalone proven theorem.
+    Marked as fullyProven since it and all its dependencies are complete.
+    Note: Uses (fullyProven := true) which requires rebuilt LeanArchitect. -/
+@[blueprint "thm:zero-even" (fullyProven := true)
   (statement := /-- Zero is even.
   \uses{def:even} -/)
   (uses := ["def:even"])

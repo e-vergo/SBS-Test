@@ -105,4 +105,15 @@ This chapter demonstrates all eight node status colors in the dependency graph.
 
 \inputleannode{thm:goal-parity}
 
+\section{LaTeX-Only Entries}
+
+% This theorem exists ONLY in LaTeX, not in Lean code.
+% It should appear as yellow (stated) in the dependency graph.
+\begin{theorem}[Parity Classification]
+\label{thm:parity-classification}
+\uses{def:even, def:odd}
+Every natural number is either even or odd, but not both.
+This theorem is stated in the blueprint but not yet formalized in Lean.
+\end{theorem}
+
 \end{document}

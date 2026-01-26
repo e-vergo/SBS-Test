@@ -4,5 +4,6 @@
   "githubUrl": "https://github.com/e-vergo/SBS-Test",
   "baseUrl": "/SBS-Test/",
   "docgen4Url": null,
-  "blueprintTexPath": "/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test/blueprint/src/blueprint.tex"
+  "blueprintTexPath": "/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test/blueprint/src/blueprint.tex",
+  "assetsDir": "/Users/eric/GitHub/Side-By-Side-Blueprint/dress-blueprint-action/assets"
 }

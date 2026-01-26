@@ -1,0 +1,57 @@
+\documentclass{article}
+
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\title{SBS-Test: ar5iv Paper Demo}
+\author{Side-By-Side Blueprint Project}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+
+\begin{document}
+
+\chapter{Introduction}
+
+This paper demonstrates the ar5iv-style paper generation feature.
+Theorems are rendered with verification badges and links back to the blueprint.
+
+\chapter{Basic Definitions}
+
+We begin with some basic definitions about natural numbers.
+
+\section{Positivity}
+
+\paperstatement{def:is-positive}
+
+\paperfull{def:double}
+
+\section{Simple Results}
+
+\paperstatement{thm:succ-positive}
+
+\paperfull{lem:double-positive}
+
+\chapter{Integer Properties}
+
+\paperfull{thm:square-nonneg}
+
+The proof of the following theorem is deferred:
+
+\paperstatement{thm:sum-squares-nonneg}
+
+\paperproof{thm:sum-squares-nonneg}
+
+\chapter{Prime Numbers}
+
+\paperfull{thm:two-prime}
+
+\paperfull{thm:three-prime}
+
+\end{document}

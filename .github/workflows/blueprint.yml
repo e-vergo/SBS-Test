@@ -51,6 +51,13 @@ jobs:
           path: Runway
           ref: main
 
+      - name: Checkout dress-blueprint-action (for assets)
+        uses: actions/checkout@v4
+        with:
+          repository: e-vergo/dress-blueprint-action
+          path: dress-blueprint-action
+          ref: main
+
       - name: Cache Lake packages
         uses: actions/cache@v4
         with:
@@ -100,14 +107,25 @@ jobs:
             SBSTest
 
       - name: Generate site with Runway
-        working-directory: SBS-Test
         run: |
-          mkdir -p .lake/build/runway
-          cd ../Runway && lake exe runway \
-            --build-dir ../SBS-Test/.lake/build \
-            --output ../SBS-Test/.lake/build/runway \
+          mkdir -p SBS-Test/.lake/build/runway
+          # Create CI-compatible runway config with absolute paths
+          cat > SBS-Test/runway-ci.json << EOF
+          {
+            "title": "SBS-Test: Blueprint Feature Demonstration",
+            "projectName": "SBSTest",
+            "githubUrl": "https://github.com/e-vergo/SBS-Test",
+            "baseUrl": "/SBS-Test/",
+            "docgen4Url": null,
+            "blueprintTexPath": "${{ github.workspace }}/SBS-Test/blueprint/src/blueprint.tex",
+            "assetsDir": "${{ github.workspace }}/dress-blueprint-action/assets"
+          }
+          EOF
+          cd Runway && lake exe runway \
+            --build-dir ${{ github.workspace }}/SBS-Test/.lake/build \
+            --output ${{ github.workspace }}/SBS-Test/.lake/build/runway \
             build \
-            ../SBS-Test/runway.json
+            ${{ github.workspace }}/SBS-Test/runway-ci.json
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

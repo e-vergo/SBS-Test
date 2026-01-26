@@ -28,10 +28,6 @@ theorem sum_squares_nonneg (x y : ℤ) : 0 ≤ x ^ 2 + y ^ 2 := by
   linarith
 
 /-- The identity $(a+b)^2 = a^2 + 2ab + b^2$. -/
-@[blueprint "thm:binomial-square"
-  (statement := /-- For any $a, b$ in a commutative ring:
-  $$(a + b)^2 = a^2 + 2ab + b^2$$ -/)
-  (proof := /-- Expand and simplify using ring axioms. -/)]
 theorem binomial_square {R : Type*} [CommRing R] (a b : R) :
     (a + b) ^ 2 = a ^ 2 + 2 * a * b + b ^ 2 := by
   ring

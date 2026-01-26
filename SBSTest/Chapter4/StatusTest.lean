@@ -115,9 +115,6 @@ theorem zero_even : Even 0 := ⟨0, by ring⟩
 -- ============================================================================
 
 /-- A future theorem about parity and primes. -/
-@[blueprint "thm:future-parity" (notReady := true)
-  (statement := /-- Every prime greater than 2 is odd.
-  \uses{def:odd} -/)]
 theorem future_parity_prime : True := trivial  -- placeholder
 
 -- ============================================================================
@@ -165,7 +162,7 @@ theorem mixed_deps (n : Nat) : Even n ∨ Odd n := by
 /-- Ultimate goal theorem with deep dependency chain. -/
 @[blueprint "thm:goal-parity" (notReady := true)
   (statement := /-- The fundamental theorem of parity.
-  \uses{thm:mixed-deps, thm:future-parity} -/)]
+  \uses{thm:mixed-deps} -/)]
 theorem goal_parity : True := trivial  -- placeholder
 
 /-- A mathlibReady theorem with complete proof. -/

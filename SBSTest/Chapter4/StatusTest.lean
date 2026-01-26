@@ -1,0 +1,174 @@
+/-
+SBS-Test: Chapter 4 - Status Testing
+Tests: All 8 blueprint node statuses for dependency graph visualization
+-/
+import Dress
+import Mathlib.Tactic
+
+namespace SBSTest.Chapter4
+
+/-!
+# Parity Definitions and Theorems
+
+This module tests all 8 blueprint node statuses using parity-themed declarations.
+
+## Status Categories:
+
+**Manual statuses** (set via attribute options):
+- `notReady`: Not ready to formalize
+- `ready`: Ready to formalize
+- `mathlibReady`: Ready to upstream to Mathlib
+- `inMathlib`: Already in Mathlib (manual override)
+
+**Default status**:
+- `stated`: Default when no manual status is set
+
+**Derived statuses** (computed automatically):
+- `sorry`: Has sorryAx in proof
+- `proven`: Formalized without sorry
+- `fullyProven`: This + all dependencies proven (auto-computed)
+-/
+
+-- ============================================================================
+-- Status: inMathlib (manual override via mathlib := true)
+-- Color: Dark blue (#1e3a5f)
+-- ============================================================================
+
+/-- A natural number is even if it's divisible by 2. -/
+@[blueprint "def:even" (mathlib := true)
+  (statement := /-- A natural number $n$ is \emph{even} if there exists $k$ such that $n = 2k$. -/)]
+def Even (n : Nat) : Prop := exists k, n = 2 * k
+
+-- ============================================================================
+-- Status: mathlibReady (manual via mathlibReady := true, needs complete proof)
+-- Color: Medium blue (#4a90d9)
+-- ============================================================================
+
+/-- A natural number is odd if it's not even. -/
+@[blueprint "def:odd" (mathlibReady := true)
+  (statement := /-- A natural number $n$ is \emph{odd} if it is not even.
+  \uses{def:even} -/)
+  (uses := ["def:even"])]
+def Odd (n : Nat) : Prop := Not (Even n)
+
+-- ============================================================================
+-- Status: proven (derived - complete proof without sorry)
+-- Color: Green (#4caf50)
+-- ============================================================================
+
+/-- The sum of two even numbers is even. -/
+@[blueprint "thm:even-add-even"
+  (statement := /-- The sum of two even numbers is even.
+  \uses{def:even} -/)
+  (uses := ["def:even"])
+  (proof := /-- Direct calculation using the definition of even. -/)]
+theorem even_add_even (a b : Nat) (ha : Even a) (hb : Even b) : Even (a + b) := by
+  obtain ⟨k, hk⟩ := ha
+  obtain ⟨j, hj⟩ := hb
+  exact ⟨k + j, by omega⟩
+
+-- ============================================================================
+-- Status: sorry (derived - has sorry in proof)
+-- Color: Orange (#ff9800)
+-- ============================================================================
+
+/-- The sum of two odd numbers is even. -/
+@[blueprint "thm:odd-add-odd"
+  (statement := /-- The sum of two odd numbers is even.
+  \uses{def:odd} -/)
+  (uses := ["def:odd"])
+  (proof := /-- This proof is incomplete and contains sorry. -/)]
+theorem odd_add_odd (a b : Nat) (ha : Odd a) (hb : Odd b) : Even (a + b) := by
+  sorry
+
+-- ============================================================================
+-- Status: fullyProven (auto-computed: this + all dependencies are proven)
+-- Color: Dark green (#2e7d32)
+-- This requires the theorem AND all its dependencies to be fully proven.
+-- Since even_add_even depends on def:even (inMathlib), and even_add_even is proven,
+-- a theorem depending ONLY on even_add_even should become fullyProven.
+-- ============================================================================
+
+/-- An even number times any number is even. -/
+@[blueprint "thm:even-times-any"
+  (statement := /-- If $a$ is even, then $a \cdot b$ is even for any $b$.
+  \uses{def:even} -/)
+  (uses := ["def:even"])
+  (proof := /-- Unfold the definition and use associativity of multiplication. -/)]
+theorem even_times_any (a b : Nat) (ha : Even a) : Even (a * b) := by
+  obtain ⟨k, hk⟩ := ha
+  exact ⟨k * b, by rw [hk]; ring⟩
+
+/-- Zero is even - a simple standalone proven theorem. -/
+@[blueprint "thm:zero-even"
+  (statement := /-- Zero is even.
+  \uses{def:even} -/)
+  (uses := ["def:even"])
+  (proof := /-- Trivially, $0 = 2 \cdot 0$. -/)]
+theorem zero_even : Even 0 := ⟨0, by ring⟩
+
+-- ============================================================================
+-- Status: notReady (manual via notReady := true)
+-- Color: Gray (#9e9e9e)
+-- ============================================================================
+
+/-- A future theorem about parity and primes. -/
+@[blueprint "thm:future-parity" (notReady := true)
+  (statement := /-- Every prime greater than 2 is odd.
+  \uses{def:odd} -/)]
+theorem future_parity_prime : True := trivial  -- placeholder
+
+-- ============================================================================
+-- Status: stated (default - no manual status, but has Lean decl)
+-- Note: "stated" typically means blueprint entry exists but no Lean implementation.
+-- When there IS a Lean implementation, the status may be overridden to proven/sorry.
+-- For testing, we use a trivial placeholder that should still show as proven.
+-- ============================================================================
+
+/-- A planned lemma about consecutive integers. -/
+@[blueprint "lem:consecutive-parity"
+  (statement := /-- Of any two consecutive integers, exactly one is even.
+  \uses{def:even, def:odd} -/)
+  (uses := ["def:even", "def:odd"])]
+theorem consecutive_parity : True := trivial  -- Becomes proven since no sorry
+
+-- ============================================================================
+-- Status: ready (manual via ready := true)
+-- Color: Light blue (#90caf9)
+-- ============================================================================
+
+/-- Ready to prove: alternating parity. -/
+@[blueprint "thm:alternating-parity" (ready := true)
+  (statement := /-- The sequence $n, n+1, n+2, \ldots$ alternates in parity.
+  \uses{lem:consecutive-parity} -/)
+  (uses := ["lem:consecutive-parity"])]
+theorem alternating_parity : True := trivial  -- placeholder
+
+-- ============================================================================
+-- Additional test cases for dependency chains
+-- ============================================================================
+
+/-- A theorem with multiple dependencies including a sorry node. -/
+@[blueprint "thm:mixed-deps"
+  (statement := /-- A result depending on both proven and sorry nodes.
+  \uses{thm:even-add-even, thm:odd-add-odd} -/)
+  (uses := ["thm:even-add-even", "thm:odd-add-odd"])
+  (proof := /-- Incomplete proof with mixed dependencies. -/)]
+theorem mixed_deps (n : Nat) : Even n ∨ Odd n := by
+  sorry
+
+/-- Ultimate goal theorem with deep dependency chain. -/
+@[blueprint "thm:goal-parity" (notReady := true)
+  (statement := /-- The fundamental theorem of parity.
+  \uses{thm:mixed-deps, thm:future-parity} -/)]
+theorem goal_parity : True := trivial  -- placeholder
+
+/-- A mathlibReady theorem with complete proof. -/
+@[blueprint "thm:double-even" (mathlibReady := true)
+  (statement := /-- Double any number is even.
+  \uses{def:even} -/)
+  (uses := ["def:even"])
+  (proof := /-- By definition, $2n = 2 \cdot n$. -/)]
+theorem double_even (n : Nat) : Even (2 * n) := ⟨n, rfl⟩
+
+end SBSTest.Chapter4

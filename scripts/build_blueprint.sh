@@ -27,6 +27,7 @@ SUBVERSO_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/subverso"
 LEAN_ARCHITECT_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/LeanArchitect"
 DRESS_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/Dress"
 RUNWAY_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/Runway"
+DRESS_BLUEPRINT_ACTION_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/dress-blueprint-action"
 SBSTest_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test"
 SIDE_BY_SIDE_BLUEPRINT_PATH="/Users/eric/GitHub/Side-By-Side-Blueprint"
 
@@ -47,7 +48,7 @@ check_dependency() {
 check_dependency "lake" "Please install Lean 4 and Lake."
 
 # Verify local paths exist
-for path in "$SUBVERSO_PATH" "$LEAN_ARCHITECT_PATH" "$DRESS_PATH" "$RUNWAY_PATH"; do
+for path in "$SUBVERSO_PATH" "$LEAN_ARCHITECT_PATH" "$DRESS_PATH" "$RUNWAY_PATH" "$DRESS_BLUEPRINT_ACTION_PATH"; do
     if [[ ! -d "$path" ]]; then
         echo "ERROR: Dependency not found at $path"
         exit 1
@@ -88,6 +89,7 @@ commit_and_push "$SUBVERSO_PATH"
 commit_and_push "$LEAN_ARCHITECT_PATH"
 commit_and_push "$DRESS_PATH"
 commit_and_push "$RUNWAY_PATH"
+commit_and_push "$DRESS_BLUEPRINT_ACTION_PATH"
 commit_and_push "$SBSTest_PATH"
 commit_and_push "$SIDE_BY_SIDE_BLUEPRINT_PATH"
 

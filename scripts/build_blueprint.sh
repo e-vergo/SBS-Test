@@ -164,6 +164,19 @@ fi
     "$PROJECT_ROOT/runway.json")
 
 echo ""
+echo "=== Step 7: Generating paper (if configured) ==="
+# Check if paperTexPath is configured in runway.json
+if grep -q '"paperTexPath"' "$PROJECT_ROOT/runway.json" && ! grep -q '"paperTexPath": null' "$PROJECT_ROOT/runway.json"; then
+    (cd "$RUNWAY_PATH" && lake exe runway \
+        --build-dir "$PROJECT_ROOT/.lake/build" \
+        --output "$OUTPUT_DIR" \
+        paper \
+        "$PROJECT_ROOT/runway.json")
+else
+    echo "No paperTexPath configured, skipping paper generation"
+fi
+
+echo ""
 echo "=== Blueprint ready ==="
 echo "  Output: $OUTPUT_DIR"
 echo "  Web: http://localhost:8000"

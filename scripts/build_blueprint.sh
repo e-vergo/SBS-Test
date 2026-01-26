@@ -54,6 +54,10 @@ for path in "$SUBVERSO_PATH" "$LEAN_ARCHITECT_PATH" "$DRESS_PATH" "$RUNWAY_PATH"
     fi
 done
 
+# Kill any existing processes on port 8000
+echo "Killing any existing servers on port 8000..."
+lsof -ti:8000 | xargs kill -9 2>/dev/null || true
+
 echo ""
 echo "=== Step 0: Committing and pushing dependency changes ==="
 
@@ -162,8 +166,20 @@ echo "=== Blueprint ready ==="
 echo "  Output: $OUTPUT_DIR"
 echo "  Web: http://localhost:8000"
 echo ""
-echo "Press Ctrl+C to stop the server."
 
-# Open browser and serve
+# Start server in background so script can exit
+python3 -m http.server -d "$OUTPUT_DIR" 8000 &
+SERVER_PID=$!
+echo "Server started (PID: $SERVER_PID)"
+
+# Open browser
 (sleep 1 && open "http://localhost:8000") &
-python3 -m http.server -d "$OUTPUT_DIR" 8000
+
+echo ""
+echo "=== BUILD COMPLETE ==="
+echo "Server running at http://localhost:8000 (PID: $SERVER_PID)"
+echo "To stop: kill $SERVER_PID"
+echo ""
+
+# Exit successfully - server continues in background
+exit 0

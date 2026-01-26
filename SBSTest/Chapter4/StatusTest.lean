@@ -139,12 +139,15 @@ theorem consecutive_parity : True := trivial  -- Becomes proven since no sorry
 -- Color: Light blue (#90caf9)
 -- ============================================================================
 
-/-- Ready to prove: alternating parity. -/
+/-- Ready to prove: alternating parity.
+    This uses `sorry` but is marked `ready := true`, so it should show TEAL, not orange. -/
 @[blueprint "thm:alternating-parity" (ready := true)
   (statement := /-- The sequence $n, n+1, n+2, \ldots$ alternates in parity.
   \uses{lem:consecutive-parity} -/)
-  (uses := ["lem:consecutive-parity"])]
-theorem alternating_parity : True := trivial  -- placeholder
+  (uses := ["lem:consecutive-parity"])
+  (proof := /-- Proof is in progress. -/)]
+theorem alternating_parity (n : Nat) : (Even n ∧ Odd (n+1)) ∨ (Odd n ∧ Even (n+1)) := by
+  sorry  -- Marked ready, so should show TEAL despite sorry
 
 -- ============================================================================
 -- Additional test cases for dependency chains

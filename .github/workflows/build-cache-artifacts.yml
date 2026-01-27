@@ -60,20 +60,20 @@ jobs:
           path: subverso
           ref: main
 
-      - name: Install elan and get mathlib cache
+      - name: Install elan
         uses: leanprover/lean-action@c544e89643240c6b398f14a431bcdc6309e36b3e # v1.4.0
         with:
           auto-config: false
           use-github-cache: false
-          use-mathlib-cache: true
+          use-mathlib-cache: false
           build: false
           lake-package-directory: SBS-Test
 
-      - name: Cache Lake build artifacts
-        uses: actions/cache@v4
+      - name: Restore Lake build cache
+        uses: actions/cache/restore@v4
         with:
           path: |
-            SBS-Test/.lake/build
+            SBS-Test/.lake
             Dress/.lake
             Runway/.lake
             LeanArchitect/.lake
@@ -81,6 +81,10 @@ jobs:
           key: lake-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
           restore-keys: |
             lake-build-${{ runner.os }}-
+
+      - name: Get mathlib cache
+        working-directory: SBS-Test
+        run: lake exe cache get || echo "::warning::Mathlib cache fetch had issues"
 
       - name: Build SubVerso
         working-directory: subverso
@@ -117,7 +121,18 @@ jobs:
             --build .lake/build \
             SBSTest
 
-      - name: Cache dressed artifacts
+      - name: Save Lake build cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            SBS-Test/.lake
+            Dress/.lake
+            Runway/.lake
+            LeanArchitect/.lake
+            subverso/.lake
+          key: lake-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
+
+      - name: Save dressed artifacts cache
         uses: actions/cache/save@v4
         with:
           path: |

@@ -69,25 +69,21 @@ jobs:
           build: false
           lake-package-directory: SBS-Test
 
-      - name: Restore Lake build cache
+      - name: Restore toolchain cache
         uses: actions/cache/restore@v4
         with:
           path: |
-            SBS-Test/.lake
             Dress/.lake
             Runway/.lake
             LeanArchitect/.lake
             subverso/.lake
-          key: lake-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
+          key: toolchain-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lean-toolchain') }}
           restore-keys: |
-            lake-build-${{ runner.os }}-
+            toolchain-build-${{ runner.os }}-
 
       - name: Get mathlib cache
         working-directory: SBS-Test
-        run: |
-          # Remove entire mathlib package to avoid conflicts with restored cache
-          rm -rf .lake/packages/mathlib || true
-          lake exe cache get || echo "::warning::Mathlib cache fetch had issues"
+        run: lake exe cache get
 
       - name: Build SubVerso
         working-directory: subverso
@@ -124,16 +120,15 @@ jobs:
             --build .lake/build \
             SBSTest
 
-      - name: Save Lake build cache
+      - name: Save toolchain cache
         uses: actions/cache/save@v4
         with:
           path: |
-            SBS-Test/.lake
             Dress/.lake
             Runway/.lake
             LeanArchitect/.lake
             subverso/.lake
-          key: lake-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
+          key: toolchain-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lean-toolchain') }}
 
       - name: Save dressed artifacts cache
         uses: actions/cache/save@v4

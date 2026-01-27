@@ -173,4 +173,59 @@ theorem goal_parity : True := trivial  -- placeholder
   (proof := /-- By definition, $2n = 2 \cdot n$. -/)]
 theorem double_even (n : Nat) : Even (2 * n) := ⟨n, rfl⟩
 
+-- ============================================================================
+-- Dashboard Feature Tests
+-- Tests for: keyTheorem, message, priority, blocked, potentialIssue,
+--            technicalDebt, misc
+-- ============================================================================
+
+/-- A key theorem that should appear in the Key Theorems dashboard panel. -/
+@[blueprint "thm:dashboard-key" (keyTheorem := true)
+  (statement := /-- This is a key theorem for testing the dashboard feature.
+  It should appear in the Key Theorems panel. -/)]
+theorem dashboard_key_theorem : 1 + 1 = 2 := rfl
+
+/-- A theorem with a user message note. -/
+@[blueprint "thm:dashboard-message" (message := "Consider alternative proof approach")
+  (statement := /-- A theorem with a message annotation for the dashboard. -/)]
+lemma dashboard_message_test : True := trivial
+
+/-- A high-priority theorem that should be highlighted. -/
+@[blueprint "thm:dashboard-priority-high" (priority := high)
+  (statement := /-- A high-priority theorem for urgent attention. -/)]
+theorem dashboard_priority_high : True := trivial
+
+/-- A medium-priority theorem. -/
+@[blueprint "thm:dashboard-priority-medium" (priority := medium)
+  (statement := /-- A medium-priority theorem. -/)]
+theorem dashboard_priority_medium : True := trivial
+
+/-- A blocked theorem waiting for upstream work. -/
+@[blueprint "thm:dashboard-blocked" (blocked := "Waiting for upstream mathlib PR")
+  (statement := /-- A blocked theorem that cannot proceed yet.
+  \uses{def:even} -/)
+  (uses := ["def:even"])]
+theorem dashboard_blocked_test : True := trivial
+
+/-- A theorem with potential issues noted. -/
+@[blueprint "lem:dashboard-issue" (potentialIssue := "May not generalize to infinite case")
+  (statement := /-- A lemma with a potential issue flag. -/)]
+lemma dashboard_issue_test : True := trivial
+
+/-- A definition with technical debt. -/
+@[blueprint "def:dashboard-debt" (technicalDebt := "Refactor to use Finset API")
+  (statement := /-- A definition that has technical debt notes. -/)]
+def dashboard_debt_test : Nat := 42
+
+/-- A theorem with miscellaneous notes. -/
+@[blueprint "thm:dashboard-misc" (misc := "See discussion in issue #42")
+  (statement := /-- A theorem with miscellaneous notes. -/)]
+theorem dashboard_misc_test : True := trivial
+
+/-- A theorem with multiple dashboard annotations. -/
+@[blueprint "thm:dashboard-multi" (keyTheorem := true) (priority := high)
+  (message := "Critical path theorem") (potentialIssue := "Needs review")
+  (statement := /-- A key theorem with multiple dashboard flags. -/)]
+theorem dashboard_multi_flags : 2 + 2 = 4 := rfl
+
 end SBSTest.Chapter4

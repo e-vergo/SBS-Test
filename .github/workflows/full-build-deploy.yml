@@ -1,4 +1,4 @@
-name: Blueprint
+name: Full Build and Deploy
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: full-build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

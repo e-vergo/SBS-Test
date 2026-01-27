@@ -94,8 +94,8 @@ jobs:
       - name: Get mathlib cache
         working-directory: SBS-Test
         run: |
-          # Clear any stale mathlib oleans before fetching fresh cache
-          rm -rf .lake/packages/mathlib/.lake/build/lib || true
+          # Remove entire mathlib package to avoid conflicts with restored cache
+          rm -rf .lake/packages/mathlib || true
           lake exe cache get || echo "::warning::Mathlib cache fetch had issues"
 
       - name: Build SubVerso

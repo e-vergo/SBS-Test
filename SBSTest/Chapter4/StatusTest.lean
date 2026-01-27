@@ -190,14 +190,14 @@ theorem dashboard_key_theorem : 1 + 1 = 2 := rfl
   (statement := /-- A theorem with a message annotation for the dashboard. -/)]
 lemma dashboard_message_test : True := trivial
 
-/-- A high-priority theorem that should be highlighted. -/
-@[blueprint "thm:dashboard-priority-high" (priority := high)
+/-- A high-priority item that should appear in Priority Items dashboard. -/
+@[blueprint "thm:dashboard-priority-high" (priorityItem := true)
   (statement := /-- A high-priority theorem for urgent attention. -/)]
 theorem dashboard_priority_high : True := trivial
 
-/-- A medium-priority theorem. -/
-@[blueprint "thm:dashboard-priority-medium" (priority := medium)
-  (statement := /-- A medium-priority theorem. -/)]
+/-- Another priority item for testing. -/
+@[blueprint "thm:dashboard-priority-medium" (priorityItem := true)
+  (statement := /-- Another priority item. -/)]
 theorem dashboard_priority_medium : True := trivial
 
 /-- A blocked theorem waiting for upstream work. -/
@@ -223,7 +223,7 @@ def dashboard_debt_test : Nat := 42
 theorem dashboard_misc_test : True := trivial
 
 /-- A theorem with multiple dashboard annotations. -/
-@[blueprint "thm:dashboard-multi" (keyTheorem := true) (priority := high)
+@[blueprint "thm:dashboard-multi" (keyTheorem := true) (priorityItem := true)
   (message := "Critical path theorem") (potentialIssue := "Needs review")
   (statement := /-- A key theorem with multiple dashboard flags. -/)]
 theorem dashboard_multi_flags : 2 + 2 = 4 := rfl

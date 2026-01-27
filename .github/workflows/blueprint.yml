@@ -55,6 +55,20 @@ jobs:
           path: dress-blueprint-action
           ref: main
 
+      - name: Checkout LeanArchitect
+        uses: actions/checkout@v4
+        with:
+          repository: e-vergo/LeanArchitect
+          path: LeanArchitect
+          ref: main
+
+      - name: Checkout SubVerso
+        uses: actions/checkout@v4
+        with:
+          repository: e-vergo/subverso
+          path: subverso
+          ref: main
+
       - name: Install elan and get mathlib cache
         uses: leanprover/lean-action@c544e89643240c6b398f14a431bcdc6309e36b3e # v1.4.0
         with:
@@ -71,9 +85,19 @@ jobs:
             SBS-Test/.lake/build
             Dress/.lake
             Runway/.lake
+            LeanArchitect/.lake
+            subverso/.lake
           key: lake-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json', 'SBS-Test/lean-toolchain') }}
           restore-keys: |
             lake-build-${{ runner.os }}-
+
+      - name: Build SubVerso
+        working-directory: subverso
+        run: lake build
+
+      - name: Build LeanArchitect
+        working-directory: LeanArchitect
+        run: lake build
 
       - name: Build Dress
         working-directory: Dress

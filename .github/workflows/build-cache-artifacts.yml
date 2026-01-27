@@ -81,9 +81,22 @@ jobs:
           restore-keys: |
             toolchain-build-${{ runner.os }}-
 
-      - name: Get mathlib cache
+      - name: Restore mathlib cache
+        id: mathlib-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: SBS-Test/.lake/packages/mathlib
+          key: mathlib-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json') }}
+
+      - name: Get mathlib (cache or build)
         working-directory: SBS-Test
-        run: lake exe cache get
+        run: |
+          if [ "${{ steps.mathlib-cache.outputs.cache-hit }}" == "true" ]; then
+            echo "Mathlib restored from GitHub Actions cache"
+          else
+            echo "No cache hit - trying mathlib cache server..."
+            lake exe cache get || echo "Server cache unavailable, will build from source"
+          fi
 
       - name: Build SubVerso
         working-directory: subverso
@@ -129,6 +142,13 @@ jobs:
             LeanArchitect/.lake
             subverso/.lake
           key: toolchain-build-${{ runner.os }}-${{ hashFiles('SBS-Test/lean-toolchain') }}
+
+      - name: Save mathlib cache
+        if: steps.mathlib-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: SBS-Test/.lake/packages/mathlib
+          key: mathlib-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json') }}
 
       - name: Save dressed artifacts cache
         uses: actions/cache/save@v4

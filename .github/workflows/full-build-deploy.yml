@@ -93,15 +93,10 @@ jobs:
       - name: Get mathlib cache
         working-directory: SBS-Test
         run: |
-          echo "=== Lake version ==="
-          lake --version
-          echo "=== Resolving dependencies ==="
-          lake update
           echo "=== Fetching mathlib cache ==="
           lake exe cache get
           echo "=== Checking for oleans ==="
-          find .lake/packages/mathlib -name "*.olean" 2>/dev/null | head -5 || echo "No oleans found"
-          ls -la .lake/packages/mathlib/.lake/build/lib/Mathlib/ 2>/dev/null | head -10 || echo "No Mathlib lib dir"
+          find .lake/packages/mathlib -name "*.olean" 2>/dev/null | wc -l
 
       - name: Build SubVerso
         working-directory: subverso

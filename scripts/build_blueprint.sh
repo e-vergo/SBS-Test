@@ -193,14 +193,14 @@ echo "Server started (PID: $SERVER_PID)"
 echo ""
 echo "=== BUILD COMPLETE ==="
 echo "Server running at http://localhost:8000 (PID: $SERVER_PID)"
-echo "Server will auto-exit in 5 minutes..."
+# echo "Server will auto-exit in 5 minutes..."
 echo ""
 
 # Auto-exit after 5 minutes with graceful offset
 # Wait 297 seconds, print warning, then kill at 300 seconds
-sleep 297
-echo "Server shutting down in 3 seconds..."
-sleep 3
-kill $SERVER_PID 2>/dev/null
-echo "Server stopped. Build script complete."
-exit 0
+# sleep 297
+# echo "Server shutting down in 3 seconds..."
+# sleep 3
+# kill $SERVER_PID 2>/dev/null
+# echo "Server stopped. Build script complete."
+# exit 0

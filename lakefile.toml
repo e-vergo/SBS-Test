@@ -13,7 +13,8 @@ rev = "v4.27.0"
 
 [[require]]
 name = "Dress"
-path = "../Dress"
+git = "https://github.com/e-vergo/Dress.git"
+rev = "main"
 
 [[lean_lib]]
 name = "SBSTest"

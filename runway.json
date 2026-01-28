@@ -4,9 +4,9 @@
   "githubUrl": "https://github.com/e-vergo/SBS-Test",
   "baseUrl": "/SBS-Test/",
   "docgen4Url": null,
-  "blueprintTexPath": "/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test/blueprint/src/blueprint.tex",
-  "assetsDir": "/Users/eric/GitHub/Side-By-Side-Blueprint/dress-blueprint-action/assets",
-  "paperTexPath": "/Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test/blueprint/src/paper.tex",
+  "blueprintTexPath": "blueprint/src/blueprint.tex",
+  "assetsDir": null,
+  "paperTexPath": "blueprint/src/paper.tex",
   "paperTitle": "ar5iv Paper Demo",
   "paperAuthors": ["Side-By-Side Blueprint Project"],
   "paperAbstract": "A demonstration of ar5iv-style paper generation with verification badges linking to Lean proofs."

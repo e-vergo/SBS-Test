@@ -5,7 +5,7 @@
   "baseUrl": "/SBS-Test/",
   "docgen4Url": null,
   "blueprintTexPath": "blueprint/src/blueprint.tex",
-  "assetsDir": null,
+  "assetsDir": "../dress-blueprint-action/assets",
   "paperTexPath": "blueprint/src/paper.tex",
   "paperTitle": "ar5iv Paper Demo",
   "paperAuthors": ["Side-By-Side Blueprint Project"],

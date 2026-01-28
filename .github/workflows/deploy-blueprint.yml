@@ -60,6 +60,11 @@ jobs:
           build: false
           lake-package-directory: Runway
 
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra
+
       - name: Generate site with Runway
         run: |
           mkdir -p SBS-Test/.lake/build/runway

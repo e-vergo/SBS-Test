@@ -175,12 +175,12 @@ theorem double_even (n : Nat) : Even (2 * n) := ⟨n, rfl⟩
 
 -- ============================================================================
 -- Dashboard Feature Tests
--- Tests for: keyTheorem, message, priority, blocked, potentialIssue,
+-- Tests for: keyDeclaration, message, priority, blocked, potentialIssue,
 --            technicalDebt, misc
 -- ============================================================================
 
 /-- A key theorem that should appear in the Key Theorems dashboard panel. -/
-@[blueprint "thm:dashboard-key" (keyTheorem := true)
+@[blueprint "thm:dashboard-key" (keyDeclaration := true)
   (statement := /-- This is a key theorem for testing the dashboard feature.
   It should appear in the Key Theorems panel. -/)]
 theorem dashboard_key_theorem : 1 + 1 = 2 := rfl
@@ -223,7 +223,7 @@ def dashboard_debt_test : Nat := 42
 theorem dashboard_misc_test : True := trivial
 
 /-- A theorem with multiple dashboard annotations. -/
-@[blueprint "thm:dashboard-multi" (keyTheorem := true) (priorityItem := true)
+@[blueprint "thm:dashboard-multi" (keyDeclaration := true) (priorityItem := true)
   (message := "Critical path theorem") (potentialIssue := "Needs review")
   (statement := /-- A key theorem with multiple dashboard flags. -/)]
 theorem dashboard_multi_flags : 2 + 2 = 4 := rfl

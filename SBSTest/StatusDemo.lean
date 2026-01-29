@@ -21,106 +21,96 @@ namespace SBSTest.StatusDemo
 
 /-! ## Main Graph: All 8 Status Colors
 
-Chain structure: base -> notready -> stated -> ready -> sorry -> proven -> fullyproven -> mathlibready -> inmathlib
+Tree structure:
+```
+              def:base
+           /     |     \
+    notready  stated   ready
+                 |       |
+               sorry     |
+                 \      /
+                 proven
+                    |
+              fullyproven
+                    |
+              mathlibready
+                    |
+               inmathlib
+```
 -/
 
--- Base definition that all others depend on
+-- Base definition - hub that others depend on
 @[blueprint "def:base"
   (title := "Base Definition")
   (statement := /-- A natural number $n$ is \emph{small} if $n < 10$. -/)]
 def isSmall (n : Nat) : Prop := n < 10
 
 /-! ### Status 1: NOT READY (red/gray) -/
--- Manual flag: (notReady := true)
--- Indicates node is not ready to be formalized yet
 @[blueprint "thm:notready" (notReady := true)
   (title := "Not Ready Example")
-  (statement := /-- A theorem that is not ready for formalization.
-  \uses{def:base} -/)
+  (statement := /-- A theorem not ready for formalization. \uses{def:base} -/)
   (uses := ["def:base"])]
 theorem notready_example : isSmall 0 := by unfold isSmall; omega
 
 /-! ### Status 2: STATED (light blue) -/
--- Default status: no manual flags, just the blueprint statement
--- Normally this would have no Lean implementation, but we include one for the graph
 @[blueprint "thm:stated"
   (title := "Stated Example")
-  (statement := /-- A theorem that is merely stated in the blueprint.
-  \uses{thm:notready} -/)
-  (uses := ["thm:notready"])
-  (proof := /-- No proof provided yet. -/)]
+  (statement := /-- A theorem merely stated. \uses{def:base} -/)
+  (uses := ["def:base"])
+  (proof := /-- No proof yet. -/)]
 theorem stated_example : isSmall 1 := by unfold isSmall; omega
 
 /-! ### Status 3: READY (orange) -/
--- Manual flag: (ready := true)
--- Indicates node is ready to be formalized by a contributor
 @[blueprint "thm:ready" (ready := true)
   (title := "Ready Example")
-  (statement := /-- A theorem ready for someone to prove.
-  \uses{thm:stated} -/)
-  (uses := ["thm:stated"])
+  (statement := /-- A theorem ready to prove. \uses{def:base} -/)
+  (uses := ["def:base"])
   (proof := /-- Ready for formalization! -/)]
 theorem ready_example : isSmall 2 := by unfold isSmall; omega
 
 /-! ### Status 4: SORRY (yellow) -/
--- Derived status: proof contains `sorry`
--- Automatically detected from the Lean code
 @[blueprint "thm:sorry"
   (title := "Sorry Example")
-  (statement := /-- A theorem with an incomplete proof.
-  \uses{thm:ready} -/)
-  (uses := ["thm:ready"])
-  (proof := /-- Proof incomplete - contains sorry. -/)]
+  (statement := /-- An incomplete proof. \uses{thm:stated} -/)
+  (uses := ["thm:stated"])
+  (proof := /-- Contains sorry. -/)]
 theorem sorry_example : isSmall 3 := by
   sorry
 
 /-! ### Status 5: PROVEN (light green) -/
--- Derived status: complete proof without sorry
--- Automatically detected from the Lean code
 @[blueprint "thm:proven"
   (title := "Proven Example")
-  (statement := /-- A theorem with a complete proof.
-  \uses{thm:sorry} -/)
-  (uses := ["thm:sorry"])
-  (proof := /-- Complete proof by omega. -/)]
+  (statement := /-- A complete proof. \uses{thm:sorry, thm:ready} -/)
+  (uses := ["thm:sorry", "thm:ready"])
+  (proof := /-- Complete proof. -/)]
 theorem proven_example : isSmall 4 := by
   unfold isSmall
   omega
 
 /-! ### Status 6: FULLY PROVEN (dark green) -/
--- Manual flag: (fullyProven := true)
--- Indicates this theorem AND all its dependencies are proven
--- Can also be auto-computed from the dependency graph
 @[blueprint "thm:fullyproven" (fullyProven := true)
   (title := "Fully Proven Example")
-  (statement := /-- A theorem where the full dependency chain is proven.
-  \uses{thm:proven} -/)
+  (statement := /-- Full dependency chain proven. \uses{thm:proven} -/)
   (uses := ["thm:proven"])
-  (proof := /-- This and all ancestors are proven. -/)]
+  (proof := /-- All ancestors proven. -/)]
 theorem fullyproven_example : isSmall 5 := by
   unfold isSmall
   omega
 
 /-! ### Status 7: MATHLIB READY (purple) -/
--- Manual flag: (mathlibReady := true)
--- Indicates this theorem is polished and ready for Mathlib upstream
 @[blueprint "thm:mathlibready" (mathlibReady := true)
   (title := "Mathlib Ready Example")
-  (statement := /-- A theorem ready to be upstreamed to Mathlib.
-  \uses{thm:fullyproven} -/)
+  (statement := /-- Ready to upstream. \uses{thm:fullyproven} -/)
   (uses := ["thm:fullyproven"])
-  (proof := /-- Polished and ready for contribution. -/)]
+  (proof := /-- Polished for Mathlib. -/)]
 theorem mathlibready_example : isSmall 6 := by
   unfold isSmall
   omega
 
 /-! ### Status 8: IN MATHLIB (dark blue) -/
--- Manual flag: (mathlib := true)
--- Indicates this result already exists in Mathlib
 @[blueprint "thm:inmathlib" (mathlib := true)
   (title := "In Mathlib Example")
-  (statement := /-- A theorem that exists in Mathlib.
-  \uses{thm:mathlibready} -/)
+  (statement := /-- Already in Mathlib. \uses{thm:mathlibready} -/)
   (uses := ["thm:mathlibready"])]
 theorem inmathlib_example : isSmall 7 := by
   unfold isSmall

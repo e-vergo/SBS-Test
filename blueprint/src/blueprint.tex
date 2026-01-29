@@ -9,12 +9,10 @@
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}{Lemma}[section]
-\newtheorem{corollary}{Corollary}[section]
 
-\title{SBS-Test: Blueprint Feature Demonstration}
+\title{SBS-Test: Status Demo}
 \author{Side-By-Side Blueprint Project}
 
-\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
 
 \begin{document}
@@ -22,95 +20,65 @@
 
 \chapter{Introduction}
 
-This project demonstrates all features of the Side-by-Side Blueprint pipeline:
+This minimal test project demonstrates all features of the Side-by-Side Blueprint:
 \begin{itemize}
-\item Syntax-highlighted Lean code with hover tooltips
-\item Token binding highlights
-\item Proof toggle synchronization
-\item Multi-chapter generation
-\item Homepage statistics
-\item Dependency graph
-\item Chapter navigation
+\item All 8 node status types in the dependency graph
+\item Disconnected component detection (the cycle is isolated)
+\item Cycle detection (cycleA and cycleB form a mutual dependency)
+\item Dashboard features (key theorems, blocked, issues, debt)
 \end{itemize}
 
-\chapter{Basic Definitions and Lemmas}
+\chapter{Main Graph: Status Types}
 
-This chapter introduces basic definitions and proves simple lemmas about positivity.
+This chapter demonstrates the 8 node status types with a connected dependency chain.
 
-\section{Definitions}
+\section{Base Definition}
 
-\inputleannode{def:is-positive}
-\inputleannode{def:double}
+\inputleannode{def:base}
 
-\section{Basic Results}
+\section{Proof Status Examples}
 
-\inputleannode{thm:succ-positive}
-\inputleannode{lem:double-positive}
-\inputleannode{lem:add-positive}
-\inputleannode{lem:max-positive}
+\inputleannode{thm:sorry}
 
-\chapter{Integer Theorems}
+\inputleannode{thm:proven}
 
-This chapter covers results about integers and algebraic identities.
+\inputleannode{thm:fullyproven}
 
-\inputleannode{thm:square-nonneg}
-\inputleannode{thm:sum-squares-nonneg}
+\section{Dashboard Feature Examples}
 
-\chapter{Advanced Topics}
+\inputleannode{thm:key}
 
-This chapter combines results from previous chapters and proves facts about primes.
+\inputleannode{thm:blocked}
 
-\section{Prime Numbers}
+\inputleannode{thm:issue}
 
-\inputleannode{thm:two-prime}
-\inputleannode{thm:three-prime}
-\inputleannode{thm:odd-prime}
+\inputleannode{thm:debt}
 
-\section{Combined Results}
+\chapter{Additional Statuses}
 
-\inputleannode{cor:double-succ-positive}
+These demonstrate the remaining manual status flags.
 
-\chapter{Status Testing}
+\section{Manual Status Flags}
 
-This chapter demonstrates all eight node status colors in the dependency graph.
+\inputleannode{thm:notready}
 
-\section{Parity Definitions}
+\inputleannode{thm:ready}
 
-\inputleannode{def:even}
+\inputleannode{thm:mathlibready}
 
-\inputleannode{def:odd}
+\inputleannode{thm:inmathlib}
 
-\section{Parity Theorems}
+\chapter{Validation Test Cases}
 
-\inputleannode{thm:even-add-even}
+These nodes test the graph validation features.
 
-\inputleannode{thm:odd-add-odd}
+\section{Disconnected Cycle}
 
-\inputleannode{thm:even-times-any}
+These two nodes form a cycle AND are disconnected from the main graph.
+This tests both cycle detection and disconnected component detection.
 
-\inputleannode{thm:zero-even}
+\inputleannode{thm:cycleA}
 
-\inputleannode{thm:double-even}
-
-\section{Future Work}
-
-\inputleannode{lem:consecutive-parity}
-
-\inputleannode{thm:alternating-parity}
-
-\inputleannode{thm:mixed-deps}
-
-\inputleannode{thm:goal-parity}
-
-\section{LaTeX-Only Entries}
-
-% This theorem exists ONLY in LaTeX, not in Lean code.
-% It should appear as yellow (stated) in the dependency graph.
-\begin{theorem}[Parity Classification]
-\label{thm:parity-classification}
-\uses{def:even, def:odd}
-Every natural number is either even or odd, but not both.
-This theorem is stated in the blueprint but not yet formalized in Lean.
-\end{theorem}
+\inputleannode{thm:cycleB}
 
 \end{document}

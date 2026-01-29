@@ -77,4 +77,16 @@ This tests both cycle detection and disconnected component detection.
 
 \inputleannode{thm:cycleB}
 
+\chapter{Module Reference Test}
+
+This chapter tests the \texttt{\textbackslash inputleanmodule\{ModuleName\}} command,
+which imports all blueprinted declarations from a Lean module at once,
+as opposed to referencing them individually with \texttt{\textbackslash inputleannode\{label\}}.
+
+\section{All Declarations from Module}
+
+The following declarations are imported via \texttt{\textbackslash inputleanmodule\{SBSTest.ModuleRefTest\}}:
+
+\inputleanmodule{SBSTest.ModuleRefTest}
+
 \end{document}

@@ -1,158 +1,151 @@
 /-
-SBS-Test: Simplified Status Demo
-Demonstrates all 8 node statuses + disconnected cycle for validation testing.
+SBS-Test: Status Demo
+Demonstrates all 8 node status colors + disconnected cycle for validation testing.
 
-Target: ~10 nodes total
-- Main graph: 8 nodes showing all status types with dependencies
-- Disconnected cycle: 2 nodes that reference each other (cycle + disconnected)
+The 8 status colors:
+1. notReady    - Manual: not ready to formalize (red/gray)
+2. stated      - Default: has blueprint statement only (light blue)
+3. ready       - Manual: ready to formalize (orange)
+4. sorry       - Derived: proof contains sorry (yellow)
+5. proven      - Derived: complete proof without sorry (light green)
+6. fullyProven - Manual/auto: this + all deps proven (dark green)
+7. mathlibReady- Manual: ready to upstream to Mathlib (purple)
+8. inMathlib   - Manual: already in Mathlib (dark blue)
+
+Target: 10 main nodes + 2 disconnected cycle nodes
 -/
 import Dress
 import Mathlib.Tactic
 
 namespace SBSTest.StatusDemo
 
-/-! ## Main Graph: 8 Status Types -/
+/-! ## Main Graph: All 8 Status Colors
 
--- 1. STATED: A definition with no proof needed (becomes "proven" since definitions are trivially complete)
--- Note: "stated" typically means LaTeX-only with no Lean code. For a Lean definition, use notReady.
+Chain structure: base -> notready -> stated -> ready -> sorry -> proven -> fullyproven -> mathlibready -> inmathlib
+-/
+
+-- Base definition that all others depend on
 @[blueprint "def:base"
   (title := "Base Definition")
   (statement := /-- A natural number $n$ is \emph{small} if $n < 10$. -/)]
 def isSmall (n : Nat) : Prop := n < 10
 
--- 2. SORRY: Has sorry in the proof (derived status)
+/-! ### Status 1: NOT READY (red/gray) -/
+-- Manual flag: (notReady := true)
+-- Indicates node is not ready to be formalized yet
+@[blueprint "thm:notready" (notReady := true)
+  (title := "Not Ready Example")
+  (statement := /-- A theorem that is not ready for formalization.
+  \uses{def:base} -/)
+  (uses := ["def:base"])]
+theorem notready_example : isSmall 0 := by unfold isSmall; omega
+
+/-! ### Status 2: STATED (light blue) -/
+-- Default status: no manual flags, just the blueprint statement
+-- Normally this would have no Lean implementation, but we include one for the graph
+@[blueprint "thm:stated"
+  (title := "Stated Example")
+  (statement := /-- A theorem that is merely stated in the blueprint.
+  \uses{thm:notready} -/)
+  (uses := ["thm:notready"])
+  (proof := /-- No proof provided yet. -/)]
+theorem stated_example : isSmall 1 := by unfold isSmall; omega
+
+/-! ### Status 3: READY (orange) -/
+-- Manual flag: (ready := true)
+-- Indicates node is ready to be formalized by a contributor
+@[blueprint "thm:ready" (ready := true)
+  (title := "Ready Example")
+  (statement := /-- A theorem ready for someone to prove.
+  \uses{thm:stated} -/)
+  (uses := ["thm:stated"])
+  (proof := /-- Ready for formalization! -/)]
+theorem ready_example : isSmall 2 := by unfold isSmall; omega
+
+/-! ### Status 4: SORRY (yellow) -/
+-- Derived status: proof contains `sorry`
+-- Automatically detected from the Lean code
 @[blueprint "thm:sorry"
   (title := "Sorry Example")
-  (statement := /-- If $n$ is small, then $n + 1 \le 10$.
-  \uses{def:base} -/)
-  (uses := ["def:base"])
+  (statement := /-- A theorem with an incomplete proof.
+  \uses{thm:ready} -/)
+  (uses := ["thm:ready"])
   (proof := /-- Proof incomplete - contains sorry. -/)]
-theorem sorry_example (n : Nat) (h : isSmall n) : n + 1 ≤ 10 := by
+theorem sorry_example : isSmall 3 := by
   sorry
 
--- 3. PROVEN: Complete proof without sorry (derived status)
+/-! ### Status 5: PROVEN (light green) -/
+-- Derived status: complete proof without sorry
+-- Automatically detected from the Lean code
 @[blueprint "thm:proven"
-  (title := "Proven Theorem")
-  (statement := /-- Zero is small.
-  \uses{def:base} -/)
-  (uses := ["def:base"])
-  (proof := /-- By definition, $0 < 10$. -/)]
-theorem zero_small : isSmall 0 := by
+  (title := "Proven Example")
+  (statement := /-- A theorem with a complete proof.
+  \uses{thm:sorry} -/)
+  (uses := ["thm:sorry"])
+  (proof := /-- Complete proof by omega. -/)]
+theorem proven_example : isSmall 4 := by
   unfold isSmall
   omega
 
--- 4. FULLY PROVEN: Manual flag (typically auto-computed from graph)
+/-! ### Status 6: FULLY PROVEN (dark green) -/
+-- Manual flag: (fullyProven := true)
+-- Indicates this theorem AND all its dependencies are proven
+-- Can also be auto-computed from the dependency graph
 @[blueprint "thm:fullyproven" (fullyProven := true)
-  (title := "Fully Proven")
-  (statement := /-- One is small.
+  (title := "Fully Proven Example")
+  (statement := /-- A theorem where the full dependency chain is proven.
   \uses{thm:proven} -/)
   (uses := ["thm:proven"])
-  (proof := /-- Follows from zero being small. -/)]
-theorem one_small : isSmall 1 := by
+  (proof := /-- This and all ancestors are proven. -/)]
+theorem fullyproven_example : isSmall 5 := by
   unfold isSmall
   omega
 
--- 5. KEY THEOREM: Marked as key declaration for dashboard
-@[blueprint "thm:key" (keyDeclaration := true)
-  (title := "Key Result")
-  (statement := /-- Two is small - a key result.
+/-! ### Status 7: MATHLIB READY (purple) -/
+-- Manual flag: (mathlibReady := true)
+-- Indicates this theorem is polished and ready for Mathlib upstream
+@[blueprint "thm:mathlibready" (mathlibReady := true)
+  (title := "Mathlib Ready Example")
+  (statement := /-- A theorem ready to be upstreamed to Mathlib.
   \uses{thm:fullyproven} -/)
   (uses := ["thm:fullyproven"])
-  (proof := /-- Straightforward from definition. -/)]
-theorem two_small : isSmall 2 := by
+  (proof := /-- Polished and ready for contribution. -/)]
+theorem mathlibready_example : isSmall 6 := by
   unfold isSmall
   omega
 
--- 6. BLOCKED: Waiting on external work
-@[blueprint "thm:blocked" (blocked := "Waiting for mathlib PR #12345")
-  (title := "Blocked Theorem")
-  (statement := /-- Three is small.
-  \uses{thm:key} -/)
-  (uses := ["thm:key"])
-  (proof := /-- Cannot proceed until upstream is merged. -/)]
-theorem three_small : isSmall 3 := by
+/-! ### Status 8: IN MATHLIB (dark blue) -/
+-- Manual flag: (mathlib := true)
+-- Indicates this result already exists in Mathlib
+@[blueprint "thm:inmathlib" (mathlib := true)
+  (title := "In Mathlib Example")
+  (statement := /-- A theorem that exists in Mathlib.
+  \uses{thm:mathlibready} -/)
+  (uses := ["thm:mathlibready"])]
+theorem inmathlib_example : isSmall 7 := by
   unfold isSmall
   omega
 
--- 7. POTENTIAL ISSUE: Has known concerns
-@[blueprint "thm:issue" (potentialIssue := "May not generalize to larger bounds")
-  (title := "Issue Example")
-  (statement := /-- Four is small.
-  \uses{thm:blocked} -/)
-  (uses := ["thm:blocked"])
-  (proof := /-- Direct computation. -/)]
-theorem four_small : isSmall 4 := by
-  unfold isSmall
-  omega
-
--- 8. TECHNICAL DEBT: Needs refactoring
-@[blueprint "thm:debt" (technicalDebt := "Refactor to use Nat.lt_of_lt_of_le")
-  (title := "Technical Debt")
-  (statement := /-- Five is small.
-  \uses{thm:issue} -/)
-  (uses := ["thm:issue"])
-  (proof := /-- Should use better lemmas. -/)]
-theorem five_small : isSmall 5 := by
-  unfold isSmall
-  omega
-
-/-! ## Disconnected Cycle: 2 Mutually Referencing Nodes
+/-! ## Disconnected Cycle: Validation Testing
 
 These nodes form a cycle (A -> B -> A) and are NOT connected to the main graph.
 This tests both cycle detection and disconnected component detection.
 -/
 
--- 9. CYCLE A: Uses Cycle B
 @[blueprint "thm:cycleA"
   (title := "Cycle A")
   (statement := /-- First half of a cyclic dependency.
   \uses{thm:cycleB} -/)
   (uses := ["thm:cycleB"])
-  (proof := /-- Trivial, but creates a cycle with cycleB. -/)]
+  (proof := /-- Creates a cycle with cycleB. -/)]
 theorem cycleA : True := trivial
 
--- 10. CYCLE B: Uses Cycle A
 @[blueprint "thm:cycleB"
   (title := "Cycle B")
   (statement := /-- Second half of a cyclic dependency.
   \uses{thm:cycleA} -/)
   (uses := ["thm:cycleA"])
-  (proof := /-- Trivial, but creates a cycle with cycleA. -/)]
+  (proof := /-- Creates a cycle with cycleA. -/)]
 theorem cycleB : True := trivial
-
-/-! ## Additional Status Demos (for completeness) -/
-
--- NOT READY: Not ready to formalize
-@[blueprint "thm:notready" (notReady := true)
-  (title := "Not Ready")
-  (statement := /-- A future theorem not ready for formalization. -/)]
-theorem not_ready_example : True := trivial
-
--- READY: Ready to formalize (has sorry but marked ready)
-@[blueprint "thm:ready" (ready := true)
-  (title := "Ready to Prove")
-  (statement := /-- Ready for someone to prove.
-  \uses{def:base} -/)
-  (uses := ["def:base"])
-  (proof := /-- Awaiting proof. -/)]
-theorem ready_example (n : Nat) : isSmall n → n < 100 := by
-  sorry
-
--- MATHLIB READY: Ready to upstream
-@[blueprint "thm:mathlibready" (mathlibReady := true)
-  (title := "Mathlib Ready")
-  (statement := /-- Ready to submit to Mathlib.
-  \uses{thm:proven} -/)
-  (uses := ["thm:proven"])
-  (proof := /-- Complete and polished. -/)]
-theorem mathlib_ready_example : isSmall 6 := by
-  unfold isSmall
-  omega
-
--- IN MATHLIB: Already in Mathlib
-@[blueprint "thm:inmathlib" (mathlib := true)
-  (title := "In Mathlib")
-  (statement := /-- This exists in Mathlib (simulated). -/)]
-theorem in_mathlib_example : 1 + 1 = 2 := rfl
 
 end SBSTest.StatusDemo

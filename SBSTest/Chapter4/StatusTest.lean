@@ -36,7 +36,9 @@ This module tests all 8 blueprint node statuses using parity-themed declarations
 
 /-- A natural number is even if it's divisible by 2. -/
 @[blueprint "def:even" (mathlib := true)
-  (statement := /-- A natural number $n$ is \emph{even} if there exists $k$ such that $n = 2k$. -/)]
+  (statement := /-- A natural number $n$ is \emph{even} if there exists $k$ such that $n = 2k$.
+  \uses{def:double} -/)
+  (uses := ["def:double"])]
 def Even (n : Nat) : Prop := exists k, n = 2 * k
 
 -- ============================================================================
@@ -162,7 +164,8 @@ theorem mixed_deps (n : Nat) : Even n ∨ Odd n := by
 /-- Ultimate goal theorem with deep dependency chain. -/
 @[blueprint "thm:goal-parity" (notReady := true)
   (statement := /-- The fundamental theorem of parity.
-  \uses{thm:mixed-deps} -/)]
+  \uses{thm:mixed-deps} -/)
+  (uses := ["thm:mixed-deps"])]
 theorem goal_parity : True := trivial  -- placeholder
 
 /-- A mathlibReady theorem with complete proof. -/
@@ -182,22 +185,30 @@ theorem double_even (n : Nat) : Even (2 * n) := ⟨n, rfl⟩
 /-- A key theorem that should appear in the Key Theorems dashboard panel. -/
 @[blueprint "thm:dashboard-key" (keyDeclaration := true)
   (statement := /-- This is a key theorem for testing the dashboard feature.
-  It should appear in the Key Theorems panel. -/)]
+  It should appear in the Key Theorems panel.
+  \uses{thm:even-add-even} -/)
+  (uses := ["thm:even-add-even"])]
 theorem dashboard_key_theorem : 1 + 1 = 2 := rfl
 
 /-- A theorem with a user message note. -/
 @[blueprint "thm:dashboard-message" (message := "Consider alternative proof approach")
-  (statement := /-- A theorem with a message annotation for the dashboard. -/)]
+  (statement := /-- A theorem with a message annotation for the dashboard.
+  \uses{thm:dashboard-key} -/)
+  (uses := ["thm:dashboard-key"])]
 lemma dashboard_message_test : True := trivial
 
 /-- A high-priority item that should appear in Priority Items dashboard. -/
 @[blueprint "thm:dashboard-priority-high" (priorityItem := true)
-  (statement := /-- A high-priority theorem for urgent attention. -/)]
+  (statement := /-- A high-priority theorem for urgent attention.
+  \uses{thm:double-even} -/)
+  (uses := ["thm:double-even"])]
 theorem dashboard_priority_high : True := trivial
 
 /-- Another priority item for testing. -/
 @[blueprint "thm:dashboard-priority-medium" (priorityItem := true)
-  (statement := /-- Another priority item. -/)]
+  (statement := /-- Another priority item.
+  \uses{thm:dashboard-priority-high} -/)
+  (uses := ["thm:dashboard-priority-high"])]
 theorem dashboard_priority_medium : True := trivial
 
 /-- A blocked theorem waiting for upstream work. -/
@@ -209,23 +220,31 @@ theorem dashboard_blocked_test : True := trivial
 
 /-- A theorem with potential issues noted. -/
 @[blueprint "lem:dashboard-issue" (potentialIssue := "May not generalize to infinite case")
-  (statement := /-- A lemma with a potential issue flag. -/)]
+  (statement := /-- A lemma with a potential issue flag.
+  \uses{thm:even-times-any} -/)
+  (uses := ["thm:even-times-any"])]
 lemma dashboard_issue_test : True := trivial
 
 /-- A definition with technical debt. -/
 @[blueprint "def:dashboard-debt" (technicalDebt := "Refactor to use Finset API")
-  (statement := /-- A definition that has technical debt notes. -/)]
+  (statement := /-- A definition that has technical debt notes.
+  \uses{def:even} -/)
+  (uses := ["def:even"])]
 def dashboard_debt_test : Nat := 42
 
 /-- A theorem with miscellaneous notes. -/
 @[blueprint "thm:dashboard-misc" (misc := "See discussion in issue #42")
-  (statement := /-- A theorem with miscellaneous notes. -/)]
+  (statement := /-- A theorem with miscellaneous notes.
+  \uses{def:dashboard-debt} -/)
+  (uses := ["def:dashboard-debt"])]
 theorem dashboard_misc_test : True := trivial
 
 /-- A theorem with multiple dashboard annotations. -/
 @[blueprint "thm:dashboard-multi" (keyDeclaration := true) (priorityItem := true)
   (message := "Critical path theorem") (potentialIssue := "Needs review")
-  (statement := /-- A key theorem with multiple dashboard flags. -/)]
+  (statement := /-- A key theorem with multiple dashboard flags.
+  \uses{thm:dashboard-misc, lem:dashboard-issue} -/)
+  (uses := ["thm:dashboard-misc", "lem:dashboard-issue"])]
 theorem dashboard_multi_flags : 2 + 2 = 4 := rfl
 
 end SBSTest.Chapter4

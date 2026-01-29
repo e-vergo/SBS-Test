@@ -12,7 +12,9 @@ namespace SBSTest.Chapter2
 
 /-- Squares of integers are non-negative. -/
 @[blueprint "thm:square-nonneg"
-  (statement := /-- For any $x \in \mathbb{Z}$, we have $x^2 \geq 0$. -/)
+  (statement := /-- For any $x \in \mathbb{Z}$, we have $x^2 \geq 0$.
+  \uses{def:is-positive} -/)
+  (uses := ["def:is-positive"])
   (proof := /-- Apply the lemma \texttt{sq\_nonneg}. -/)]
 theorem square_nonneg (x : ℤ) : 0 ≤ x ^ 2 := sq_nonneg x
 

@@ -14,21 +14,25 @@ open SBSTest.Chapter1
 
 /-- Two is prime. -/
 @[blueprint "thm:two-prime"
-  (statement := /-- The number $2$ is prime. -/)
+  (statement := /-- The number $2$ is prime.
+  \uses{def:is-positive} -/)
+  (uses := ["def:is-positive"])
   (proof := /-- Standard fact from Mathlib. -/)]
 theorem two_prime : Nat.Prime 2 := Nat.prime_two
 
 /-- Three is prime. -/
 @[blueprint "thm:three-prime"
-  (statement := /-- The number $3$ is prime. -/)
+  (statement := /-- The number $3$ is prime.
+  \uses{thm:two-prime} -/)
+  (uses := ["thm:two-prime"])
   (proof := /-- Standard fact from Mathlib. -/)]
 theorem three_prime : Nat.Prime 3 := Nat.prime_three
 
 /-- All primes greater than 2 are odd - multi-step tactic proof. -/
 @[blueprint "thm:odd-prime"
   (statement := /-- If $p > 2$ is prime, then $p$ is odd.
-  \uses{thm:two-prime} -/)
-  (uses := ["thm:two-prime"])
+  \uses{thm:two-prime, thm:three-prime} -/)
+  (uses := ["thm:two-prime", "thm:three-prime"])
   (proof := /-- By contradiction: if $p$ is even, then $2 \mid p$, so $p = 2$. -/)]
 theorem odd_prime (p : ℕ) (hp : Nat.Prime p) (hp2 : p > 2) : Odd p := by
   by_contra h

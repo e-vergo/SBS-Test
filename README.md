@@ -108,7 +108,7 @@ theorem succ_positive (n : ℕ) : isPositive (n + 1) := Nat.succ_pos n
 @[blueprint "thm:done" (fullyProven := true)]       -- Fully proven override (dark green)
 
 -- Custom display name
-@[blueprint "thm:square-nonneg" (displayName := "Squares are Non-negative")]
+@[blueprint "thm:square-nonneg" (title := "Squares are Non-negative")]
 ```
 
 ## Test Fixtures

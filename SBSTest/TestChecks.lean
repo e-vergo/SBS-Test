@@ -16,7 +16,7 @@ They are mutually recursive - cycleA uses cycleB and cycleB uses cycleA.
 
 /-- CycleA: Part of a cycle for testing. Uses CycleB via metadata. -/
 @[blueprint "thm:cycleA"
-  (displayName := "Cycle Test A")
+  (title := "Cycle Test A")
   (statement := /-- A trivial truth, part of a cycle test.
   \uses{thm:cycleB} -/)
   (uses := ["thm:cycleB"])
@@ -25,7 +25,7 @@ theorem cycleA : True := trivial
 
 /-- CycleB: Part of a cycle for testing. Uses CycleA via metadata. -/
 @[blueprint "thm:cycleB"
-  (displayName := "Cycle Test B")
+  (title := "Cycle Test B")
   (statement := /-- A trivial truth, part of a cycle test.
   \uses{thm:cycleA} -/)
   (uses := ["thm:cycleA"])
@@ -42,7 +42,7 @@ Used to test disconnected component detection.
 /-- DisconnectedTheorem: Intentionally not connected to main graph.
     Used to test disconnected component detection. -/
 @[blueprint "thm:disconnected"
-  (displayName := "Disconnected Test")
+  (title := "Disconnected Test")
   (statement := /-- $1 + 1 = 2$. This theorem has no dependencies. -/)
   (proof := /-- By reflexivity of equality. -/)]
 theorem disconnectedTheorem : 1 + 1 = 2 := rfl

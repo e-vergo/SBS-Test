@@ -91,9 +91,48 @@ commit_and_push "$DRESS_PATH"
 commit_and_push "$RUNWAY_PATH"
 commit_and_push "$DRESS_BLUEPRINT_ACTION_PATH"
 commit_and_push "$SBSTest_PATH"
-commit_and_push "$SIDE_BY_SIDE_BLUEPRINT_PATH"
 
 cd "$PROJECT_ROOT"
+
+echo ""
+echo "=== Step 0b: Updating lake manifests ==="
+
+# Update LeanArchitect's SubVerso dependency
+echo "Updating LeanArchitect dependencies..."
+(cd "$LEAN_ARCHITECT_PATH" && lake update SubVerso 2>/dev/null || true)
+
+# Update Dress's LeanArchitect dependency
+echo "Updating Dress dependencies..."
+(cd "$DRESS_PATH" && lake update LeanArchitect 2>/dev/null || true)
+
+# Update Runway's Dress dependency
+echo "Updating Runway dependencies..."
+(cd "$RUNWAY_PATH" && lake update Dress 2>/dev/null || true)
+
+# Update SBS-Test's Dress dependency
+echo "Updating project dependencies..."
+(cd "$PROJECT_ROOT" && lake update Dress 2>/dev/null || true)
+
+# Commit and push any manifest changes
+for repo_path in "$LEAN_ARCHITECT_PATH" "$DRESS_PATH" "$RUNWAY_PATH"; do
+    repo_name=$(basename "$repo_path")
+    cd "$repo_path"
+    if [[ -n $(git status --porcelain lake-manifest.json 2>/dev/null) ]]; then
+        echo "  Committing manifest update in $repo_name..."
+        git add lake-manifest.json
+        git commit -m "Update lake-manifest.json from build_blueprint.sh"
+        git push
+    fi
+    cd "$PROJECT_ROOT"
+done
+
+# Commit and push SBS-Test manifest if changed
+if [[ -n $(git status --porcelain lake-manifest.json 2>/dev/null) ]]; then
+    echo "  Committing manifest update in project..."
+    git add lake-manifest.json
+    git commit -m "Update lake-manifest.json from build_blueprint.sh"
+    git push
+fi
 
 echo ""
 echo "=== Step 1: Building local dependency forks ==="

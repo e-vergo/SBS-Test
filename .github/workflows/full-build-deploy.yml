@@ -95,7 +95,7 @@ jobs:
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra texlive-science
 
       # ========================================
-      # CACHE: Restore toolchain
+      # CACHE: Restore toolchain and mathlib
       # ========================================
       - name: Restore toolchain cache
         id: toolchain-cache
@@ -110,6 +110,27 @@ jobs:
           restore-keys: |
             toolchain-build-${{ runner.os }}-${{ env.LEAN_VERSION }}-
             toolchain-build-${{ runner.os }}-
+
+      - name: Restore mathlib cache
+        id: mathlib-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: SBS-Test/.lake/packages/mathlib
+          key: mathlib-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json') }}
+
+      - name: Get mathlib cache
+        working-directory: SBS-Test
+        run: |
+          if [ "${{ steps.mathlib-cache.outputs.cache-hit }}" == "true" ]; then
+            echo "Mathlib restored from GitHub Actions cache"
+            OLEAN_COUNT=$(find .lake/packages/mathlib -name "*.olean" 2>/dev/null | wc -l)
+            echo "Found $OLEAN_COUNT oleans in cache"
+          else
+            echo "Fetching mathlib cache from server..."
+            lake exe cache get || echo "::warning::Server cache unavailable, will build from source"
+            OLEAN_COUNT=$(find .lake/packages/mathlib -name "*.olean" 2>/dev/null | wc -l)
+            echo "Found $OLEAN_COUNT oleans after cache get"
+          fi
 
       # ========================================
       # BUILD: Toolchain (SubVerso -> LeanArchitect -> Dress -> Runway)
@@ -273,6 +294,13 @@ jobs:
             Dress/.lake
             Runway/.lake
           key: toolchain-build-${{ runner.os }}-${{ env.LEAN_VERSION }}-${{ hashFiles('SBS-Test/lean-toolchain') }}
+
+      - name: Save mathlib cache
+        if: steps.mathlib-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: SBS-Test/.lake/packages/mathlib
+          key: mathlib-${{ runner.os }}-${{ hashFiles('SBS-Test/lake-manifest.json') }}
 
       # ========================================
       # UPLOAD: Pages artifact

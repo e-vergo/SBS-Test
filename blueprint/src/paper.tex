@@ -24,34 +24,44 @@ Theorems are rendered with verification badges and links back to the blueprint.
 
 \chapter{Basic Definitions}
 
-We begin with some basic definitions about natural numbers.
+We begin with the core definition that underlies all results.
 
-\section{Positivity}
+\section{The Small Predicate}
 
-\paperstatement{def:is-positive}
+\paperstatement{def:base}
 
-\paperfull{def:double}
+\chapter{Status Examples}
 
-\section{Simple Results}
+This chapter demonstrates different proof statuses.
 
-\paperstatement{thm:succ-positive}
+\section{Work In Progress}
 
-\paperfull{lem:double-positive}
+The following theorem has an incomplete proof:
 
-\chapter{Integer Properties}
+\paperfull{thm:sorry}
 
-\paperfull{thm:square-nonneg}
+\section{Complete Proofs}
 
-The proof of the following theorem is deferred:
+These theorems have been fully formalized:
 
-\paperstatement{thm:sum-squares-nonneg}
+\paperfull{thm:proven}
 
-\paperproof{thm:sum-squares-nonneg}
+\paperfull{thm:fullyproven}
 
-\chapter{Prime Numbers}
+\chapter{Mathlib Integration}
 
-\paperfull{thm:two-prime}
+Results ready for or already in Mathlib.
 
-\paperfull{thm:three-prime}
+\paperstatement{thm:mathlibready}
+
+\paperstatement{thm:inmathlib}
+
+\chapter{Validation Cases}
+
+The following nodes test cycle detection:
+
+\paperfull{thm:cycleA}
+
+\paperfull{thm:cycleB}
 
 \end{document}

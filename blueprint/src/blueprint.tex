@@ -25,44 +25,40 @@ This minimal test project demonstrates all features of the Side-by-Side Blueprin
 \item All 8 node status types in the dependency graph
 \item Disconnected component detection (the cycle is isolated)
 \item Cycle detection (cycleA and cycleB form a mutual dependency)
-\item Dashboard features (key theorems, blocked, issues, debt)
+\item Dashboard features (key theorems, messages, blocked, issues, debt, misc)
 \end{itemize}
 
 \chapter{Main Graph: Status Types}
 
-This chapter demonstrates the 8 node status types with a connected dependency chain.
+This chapter demonstrates the 8 node status types with a tree-structured dependency graph.
 
 \section{Base Definition}
 
+The core definition that all theorems depend on.
+
 \inputleannode{def:base}
 
-\section{Proof Status Examples}
+\section{First-Level Dependencies}
 
-\inputleannode{thm:sorry}
-
-\inputleannode{thm:proven}
-
-\inputleannode{thm:fullyproven}
-
-\section{Dashboard Feature Examples}
-
-\inputleannode{thm:key}
-
-\inputleannode{thm:blocked}
-
-\inputleannode{thm:issue}
-
-\inputleannode{thm:debt}
-
-\chapter{Additional Statuses}
-
-These demonstrate the remaining manual status flags.
-
-\section{Manual Status Flags}
+Three theorems branching from the base definition, each with different status flags.
 
 \inputleannode{thm:notready}
 
+\inputleannode{thm:stated}
+
 \inputleannode{thm:ready}
+
+\section{Second Level: Sorry Status}
+
+\inputleannode{thm:sorry}
+
+\section{Convergence Point}
+
+\inputleannode{thm:proven}
+
+\section{Downstream Statuses}
+
+\inputleannode{thm:fullyproven}
 
 \inputleannode{thm:mathlibready}
 

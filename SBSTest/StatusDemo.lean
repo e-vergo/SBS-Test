@@ -86,9 +86,10 @@ theorem proven_mid : True := trivial
   (uses := ["proven_mid"])]
 theorem proven_chain : True := trivial
 
--- fullyProven: Manual flag (all ancestors should be proven)
+-- fullyProven: Auto-computed (all ancestors are proven/fullyProven)
 -- These use proven_leaf so the dependency chain is: proven_leaf -> fully_chain_1 -> fully_chain_2 -> fully_chain_3
-@[blueprint "fully_chain_1" (fullyProven := true)
+-- The fullyProven status is now computed automatically by the graph builder
+@[blueprint "fully_chain_1"
   (title := "Fully Chain 1")
   (keyDeclaration := true)
   (message := "First in the fully proven chain")
@@ -96,13 +97,13 @@ theorem proven_chain : True := trivial
   (uses := ["proven_leaf"])]
 theorem fully_chain_1 : True := proven_leaf
 
-@[blueprint "fully_chain_2" (fullyProven := true)
+@[blueprint "fully_chain_2"
   (title := "Fully Chain 2")
   (statement := /-- Second node in the fully proven chain. \uses{fully_chain_1} -/)
   (uses := ["fully_chain_1"])]
 theorem fully_chain_2 : True := fully_chain_1
 
-@[blueprint "fully_chain_3" (fullyProven := true)
+@[blueprint "fully_chain_3"
   (title := "Fully Chain 3")
   (statement := /-- Third node in the fully proven chain. \uses{fully_chain_2} -/)
   (uses := ["fully_chain_2"])]

@@ -41,16 +41,17 @@ SBS-Test/
 ├── blueprint/src/
 │   ├── blueprint.tex        # Main blueprint
 │   └── paper.tex            # Paper generation test
-├── runway.json              # Site configuration
-└── scripts/build_blueprint.sh
+└── runway.json              # Site configuration
 ```
 
 ## Building
 
+The project uses GitHub Actions for CI/CD. See [dress-blueprint-action](https://github.com/e-vergo/dress-blueprint-action) for details.
+
+To build locally, ensure you have the toolchain dependencies and run:
+
 ```bash
-cd /Users/eric/GitHub/Side-By-Side-Blueprint/SBS-Test
-./scripts/build_blueprint.sh
-# Opens localhost:8000 when complete
+lake build
 ```
 
 ## Output

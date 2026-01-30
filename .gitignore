@@ -1,5 +1,9 @@
 ## macOS
 .DS_Store
+
+## Local build scripts
+scripts/
+
 ## Lake
 .lake/*
 .cache/*

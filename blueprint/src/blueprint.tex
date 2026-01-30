@@ -7,8 +7,10 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
 
 \title{SBS-Test: Status Demo}
 \author{Side-By-Side Blueprint Project}
@@ -22,47 +24,73 @@
 
 This minimal test project demonstrates all features of the Side-by-Side Blueprint:
 \begin{itemize}
-\item All 8 node status types in the dependency graph
+\item All 6 node status types in the dependency graph
 \item Disconnected component detection (the cycle is isolated)
-\item Cycle detection (cycleA and cycleB form a mutual dependency)
+\item Cycle detection (cycle\_a and cycle\_b form a mutual dependency)
 \item Dashboard features (key theorems, messages, blocked, issues, debt, misc)
 \end{itemize}
 
 \chapter{Main Graph: Status Types}
 
-This chapter demonstrates the 8 node status types with a tree-structured dependency graph.
+This chapter demonstrates the 6 node status types with a tree-structured dependency graph
+containing 13 connected nodes.
 
-\section{Base Definition}
+\section{Base Axiom}
 
-The core definition that all theorems depend on.
+A base axiom with no Lean code (notReady status by default).
 
-\inputleannode{def:base}
+\begin{axiom}[base\_axiom]
+\label{base_axiom}
+A base axiom with no Lean code (notReady status).
+\end{axiom}
 
-\section{First-Level Dependencies}
+\section{Foundation}
 
-Three theorems branching from the base definition, each with different status flags.
+Foundation lemma, manually marked notReady.
 
-\inputleannode{thm:notready}
+\inputleannode{foundation}
 
-\inputleannode{thm:stated}
+\section{Ready Status}
 
-\inputleannode{thm:ready}
+Two theorems marked as ready to formalize.
 
-\section{Second Level: Sorry Status}
+\inputleannode{ready_to_prove}
 
-\inputleannode{thm:sorry}
+\inputleannode{another_ready}
 
-\section{Convergence Point}
+\section{Sorry Status}
 
-\inputleannode{thm:proven}
+Two theorems with incomplete proofs (sorry).
 
-\section{Downstream Statuses}
+\inputleannode{has_sorry}
 
-\inputleannode{thm:fullyproven}
+\inputleannode{also_sorry}
 
-\inputleannode{thm:mathlibready}
+\section{Proven Status}
 
-\inputleannode{thm:inmathlib}
+Three theorems with complete proofs.
+
+\inputleannode{proven_leaf}
+
+\inputleannode{proven_mid}
+
+\inputleannode{proven_chain}
+
+\section{Fully Proven Chain}
+
+Three theorems forming a fully proven dependency chain.
+
+\inputleannode{fully_chain_1}
+
+\inputleannode{fully_chain_2}
+
+\inputleannode{fully_chain_3}
+
+\section{Mathlib Ready}
+
+A theorem ready for mathlib.
+
+\inputleannode{mathlib_theorem}
 
 \chapter{Validation Test Cases}
 
@@ -73,9 +101,9 @@ These nodes test the graph validation features.
 These two nodes form a cycle AND are disconnected from the main graph.
 This tests both cycle detection and disconnected component detection.
 
-\inputleannode{thm:cycleA}
+\inputleannode{cycle_a}
 
-\inputleannode{thm:cycleB}
+\inputleannode{cycle_b}
 
 \chapter{Module Reference Test}
 

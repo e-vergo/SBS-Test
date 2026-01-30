@@ -9,7 +9,7 @@
 \newtheorem{lemma}{Lemma}[section]
 \newtheorem{corollary}{Corollary}[section]
 
-\title{SBS-Test: ar5iv Paper Demo}
+\title{SBS-Test: Status Badge Demo}
 \author{Side-By-Side Blueprint Project}
 
 \newcommand{\Z}{\mathbb{Z}}
@@ -19,47 +19,44 @@
 
 \chapter{Introduction}
 
-This paper demonstrates the ar5iv-style paper generation feature.
-Theorems are rendered with verification badges and links back to the blueprint.
+This paper demonstrates all 6 status badges with colored indicator dots.
 
-\chapter{Basic Definitions}
+\chapter{All Six Status Types}
 
-We begin with the core definition that underlies all results.
+\section{Not Ready (Sandy Brown)}
 
-\section{The Foundation}
+Nodes that are not yet formalized:
 
-\paperstatement{foundation}
+\paperfull{foundation}
 
-\chapter{Status Examples}
+\section{Ready (Light Sea Green)}
 
-This chapter demonstrates different proof statuses.
+Nodes marked ready for formalization:
 
-\section{Work In Progress}
+\paperfull{ready_to_prove}
 
-The following theorem has an incomplete proof:
+\section{Sorry (Dark Red)}
+
+Nodes with incomplete proofs containing sorry:
 
 \paperfull{has_sorry}
 
-\section{Complete Proofs}
+\section{Proven (Light Green)}
 
-These theorems have been fully formalized:
+Nodes with complete proofs but incomplete dependencies:
 
-\paperfull{proven_leaf}
+\paperfull{proven_mid}
+
+\section{Fully Proven (Forest Green)}
+
+Nodes where both the proof and all dependencies are complete:
 
 \paperfull{fully_chain_1}
 
-\chapter{Mathlib Integration}
+\section{Mathlib Ready (Light Blue)}
 
-Results ready for or already in Mathlib.
+Nodes ready for or already in Mathlib:
 
-\paperstatement{mathlib_theorem}
-
-\chapter{Validation Cases}
-
-The following nodes test cycle detection:
-
-\paperfull{cycle_a}
-
-\paperfull{cycle_b}
+\paperfull{mathlib_theorem}
 
 \end{document}

@@ -6,8 +6,5 @@
   "docgen4Url": null,
   "blueprintTexPath": "blueprint/src/blueprint.tex",
   "assetsDir": "../dress-blueprint-action/assets",
-  "paperTexPath": "blueprint/src/paper.tex",
-  "paperTitle": "ar5iv Paper Demo",
-  "paperAuthors": ["Side-By-Side Blueprint Project"],
-  "paperAbstract": "A demonstration of ar5iv-style paper generation with verification badges linking to Lean proofs."
+  "paperTexPath": "blueprint/src/paper.tex"
 }

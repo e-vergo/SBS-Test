@@ -5,7 +5,7 @@ Demonstrates the SBSBlueprint genre with hook directives.
 import SBSBlueprint
 import SBSTest.StatusDemo  -- For @[blueprint] declarations
 
-open SBSBlueprint
+open Verso.Genre.SBSBlueprint
 
 #doc (SBSBlueprint) "SBS-Test Blueprint" =>
 
@@ -29,20 +29,24 @@ status, which is auto-computed by analyzing the dependency graph.
 Our chain begins with a proven leaf node that has no dependencies:
 
 :::leanNode "proven_leaf"
+:::
 
 ## Building the Chain
 
 From this leaf, we build a chain of fully proven theorems:
 
 :::leanNode "fully_chain_1"
+:::
 
 This continues through the chain:
 
 :::leanNode "fully_chain_2"
+:::
 
 And reaches its conclusion:
 
 :::leanNode "fully_chain_3"
+:::
 
 # Theorems with Incomplete Proofs
 
@@ -51,11 +55,13 @@ that work remains to be done. The system automatically detects this and marks th
 node with the "sorry" status.
 
 :::leanNode "has_sorry"
+:::
 
 Nodes with sorry block downstream verification. Even if a theorem has a complete
 proof structure, if it depends on a sorry node, it cannot be marked as fully proven.
 
 :::leanNode "also_sorry"
+:::
 
 # Manual Status Flags
 
@@ -67,12 +73,14 @@ This theorem is marked as "ready" -- the proof strategy is clear, we just need
 to write the Lean code:
 
 :::leanNode "ready_to_prove"
+:::
 
 ## Ready for Mathlib
 
 This theorem is polished and ready for submission to mathlib:
 
 :::leanNode "mathlib_theorem"
+:::
 
 # Dependency Cycles
 
@@ -80,11 +88,14 @@ The following nodes form a cycle, which is usually a sign of a logical error
 in the blueprint structure:
 
 :::leanNode "cycle_a"
+:::
 
 :::leanNode "cycle_b"
+:::
 
 # Full Module Reference
 
 The following section includes all nodes from the StatusDemo module:
 
 :::leanModule "SBSTest.StatusDemo"
+:::

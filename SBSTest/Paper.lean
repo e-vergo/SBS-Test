@@ -5,7 +5,7 @@ Demonstrates paper-style output with :::paperStatement, :::paperFull, :::paperPr
 import SBSBlueprint
 import SBSTest.StatusDemo  -- For @[blueprint] declarations
 
-open SBSBlueprint
+open Verso.Genre.SBSBlueprint
 
 #doc (SBSBlueprint) "SBS-Test Paper" =>
 
@@ -36,6 +36,7 @@ We begin with the fundamental result that any proposition implies itself. This i
 cornerstone of our development.
 
 :::paperStatement "proven_leaf"
+:::
 
 The proof proceeds by direct implication introduction: given any proposition `P` and
 a proof `h : P`, we simply return `h` as our proof of `P`. This result requires no
@@ -48,6 +49,7 @@ Each step in this chain has been mechanically verified, and the entire dependenc
 tree is complete.
 
 :::paperFull "fully_chain_1"
+:::
 
 The first theorem in our chain directly uses the proven leaf. Since its only dependency
 is fully verified, this theorem automatically receives the "fully proven" status.
@@ -55,6 +57,7 @@ is fully verified, this theorem automatically receives the "fully proven" status
 Continuing the chain, we establish a weakening principle:
 
 :::paperStatement "fully_chain_2"
+:::
 
 This demonstrates that from `P`, we can derive `Q → P` for any `Q`. The proof ignores
 the hypothesis `Q` and returns the original proof of `P`.
@@ -65,6 +68,7 @@ Our flagship result establishes the transitivity of logical implication. This th
 meets mathlib quality standards and is ready for submission.
 
 :::paperFull "mathlib_theorem"
+:::
 
 The proof composes the two given implications: given `hPQ : P → Q` and `hQR : Q → R`
 and a proof of `P`, we apply `hQR` to `hPQ hP` to obtain a proof of `R`.
@@ -79,6 +83,7 @@ theorems that still contain gaps.
 The following theorem has an incomplete proof, indicated by the presence of `sorry`:
 
 :::paperProof "has_sorry"
+:::
 
 The sorry indicates that the proof of `∀ n : Nat, n + 0 = n` is not yet complete. While
 this is a trivial fact in arithmetic (it follows by reflexivity), we intentionally leave

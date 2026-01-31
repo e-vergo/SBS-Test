@@ -147,7 +147,6 @@ However, if they depend on nodes with sorry, they won't be "fullyProven".
 -- This should show as "proven" (light green)
 @[blueprint "proven_leaf"
   (title := "Proven Leaf")
-  (keyDeclaration := true)
   (message := "A proven leaf node - no dependencies, complete proof")
   (statement := /-- A proven leaf node with no dependencies.
 

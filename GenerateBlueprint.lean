@@ -5,7 +5,7 @@ This executable produces `.lake/build/runway/blueprint_verso.html`.
 import SBSBlueprint
 import SBSTest.Blueprint
 
-open Verso.Genre.SBSBlueprint
+open Verso.Genre.SBSBlueprint.Main
 
 def main : IO UInt32 :=
   sbsBlueprintMain (%doc SBSTest.Blueprint) (config := {

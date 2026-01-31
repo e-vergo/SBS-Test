@@ -23,3 +23,11 @@ rev = "main"
 
 [[lean_lib]]
 name = "SBSTest"
+
+[[lean_exe]]
+name = "generate-blueprint-verso"
+root = "GenerateBlueprint"
+
+[[lean_exe]]
+name = "generate-paper-verso"
+root = "GeneratePaper"

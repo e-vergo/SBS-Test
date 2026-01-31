@@ -7,7 +7,7 @@ Tests all 6 status colors and graph check failures (connectivity + cycles).
 2. ready       - Light Sea Green (manual flag)
 3. sorry       - Dark Red (derived: proof contains sorry)
 4. proven      - Light Green (derived: complete proof)
-5. fullyProven - Forest Green (manual flag, all deps proven)
+5. fullyProven - Forest Green (auto-computed: all deps proven)
 6. mathlibReady- Light Blue (manual flag)
 
 ## Graph Structure:
@@ -24,118 +24,337 @@ import Mathlib.Tactic
 
 namespace SBSTest.StatusDemo
 
-/-! ## Main Graph: 13 Connected Nodes -/
+/-! ## Main Graph: 13 Connected Nodes
 
--- notReady: base_axiom has no Lean code (LaTeX only)
--- This declaration is for foundation only
+This section demonstrates the main connected component of the dependency graph.
+Each node has a specific status to test the 6-color model.
+-/
 
 -- notReady: Manual flag
+-- This is a foundational lemma that we're marking as not ready
+-- It has multiple lines of comments to test comment highlighting
 @[blueprint "foundation" (notReady := true)
   (title := "Foundation")
-  (message := "Foundation lemma - manually marked not ready")
-  (statement := /-- Foundation lemma, manually marked notReady. \uses{base_axiom} -/)
-  (uses := ["base_axiom"])]
-theorem foundation : True := trivial
+  (message := "Foundation lemma - manually marked not ready for formalization")
+  (statement := /-- Foundation lemma, manually marked notReady.
 
--- ready: Manual flags
+  This represents a lemma that exists in the informal blueprint but
+  is not yet ready to be formalized. Common reasons include:
+  - Missing prerequisite lemmas
+  - Unclear statement that needs clarification
+  - Depends on unformalized concepts
+
+  \uses{base_axiom} -/)
+  (uses := ["base_axiom"])]
+theorem foundation : True := by
+  -- Even though we have a proof, the manual notReady flag takes precedence
+  -- This tests that manual status flags override auto-detection
+  trivial  -- simple proof for testing purposes
+
+/-! ## Ready Status Demonstrations
+
+These nodes are marked as "ready" - meaning they're ready to be formalized
+but haven't been completed yet. In practice, you'd use this for lemmas
+where you have a clear proof strategy but haven't written the Lean code.
+-/
+
+-- Full-line comment before ready_to_prove
+-- Testing multiple comment lines in sequence
+-- Each should be highlighted in green italic
 @[blueprint "ready_to_prove" (ready := true)
   (title := "Ready to Prove")
-  (message := "Ready for formalization")
-  (statement := /-- Ready to be formalized. \uses{foundation} -/)
+  (message := "Ready for formalization - proof strategy is clear")
+  (statement := /-- A lemma that's ready to be formalized.
+
+  The proof strategy is:
+  1. Apply the foundation lemma
+  2. Use basic logic
+
+  \uses{foundation} -/)
   (uses := ["foundation"])]
-theorem ready_to_prove : True := trivial
+theorem ready_to_prove : True := by
+  -- This proof exists but the ready flag is for demonstration
+  exact trivial  -- inline comment on the tactic
 
 @[blueprint "another_ready" (ready := true)
   (title := "Another Ready")
-  (statement := /-- Another lemma ready to prove. \uses{ready_to_prove} -/)
-  (uses := ["ready_to_prove"])]
-theorem another_ready : True := trivial
+  (statement := /-- Another lemma marked as ready.
 
--- sorry: Has sorry in proof
+  This tests that multiple ready nodes display correctly
+  in the dependency graph and dashboard.
+
+  \uses{ready_to_prove} -/)
+  (uses := ["ready_to_prove"])]
+theorem another_ready : True := by
+  -- Comment inside the proof block
+  -- Demonstrating comments in tactic mode
+  trivial
+
+/-! ## Sorry Status Demonstrations
+
+Nodes with `sorry` in their proof automatically get the "sorry" status.
+This is detected during elaboration and cannot be overridden by manual flags.
+-/
+
+-- This theorem intentionally has a sorry to demonstrate the sorry status
+-- The sorry should make the node appear in dark red
 @[blueprint "has_sorry"
   (title := "Has Sorry")
   (priorityItem := true)
-  (blocked := "Waiting for upstream lemma")
-  (statement := /-- This theorem has a sorry in its proof. \uses{another_ready} -/)
+  (blocked := "Waiting for upstream lemma from mathlib")
+  (potentialIssue := "The sorry here is blocking downstream proofs")
+  (statement := /-- This theorem has a sorry in its proof.
+
+  The sorry indicates that the proof is incomplete.
+  In a real project, you would:
+  - Track why the sorry exists (blocked field)
+  - Note any issues (potentialIssue field)
+  - Mark as priorityItem if it's blocking progress
+
+  \uses{another_ready} -/)
   (uses := ["another_ready"])]
-theorem has_sorry : 1 = 1 := by sorry
+theorem has_sorry : ∀ n : Nat, n + 0 = n := by
+  -- We're using sorry here to demonstrate the sorry status
+  -- In practice, this would be: intro n; rfl
+  intro n
+  -- The sorry below triggers the "sorry" status color
+  sorry  -- TODO: replace with actual proof
 
 @[blueprint "also_sorry"
   (title := "Also Sorry")
-  (statement := /-- Another theorem with sorry. \uses{has_sorry} -/)
-  (uses := ["has_sorry"])]
-theorem also_sorry : 2 = 2 := by sorry
+  (technicalDebt := "Need to prove this properly after has_sorry is done")
+  (statement := /-- Another theorem with sorry.
 
--- proven: Complete proofs
+  This demonstrates that sorry status propagates understanding
+  through the dependency graph - nodes depending on sorry nodes
+  cannot be fully proven until the sorry is resolved.
+
+  \uses{has_sorry} -/)
+  (uses := ["has_sorry"])]
+theorem also_sorry : ∀ n : Nat, 0 + n = n := by
+  -- Another sorry for testing
+  intro n
+  -- Comment before the sorry
+  sorry  -- inline comment after sorry
+
+/-! ## Proven Status Demonstrations
+
+Nodes with complete proofs (no sorry) get the "proven" status.
+However, if they depend on nodes with sorry, they won't be "fullyProven".
+-/
+
+-- A complete proof with no dependencies
+-- This should show as "proven" (light green)
 @[blueprint "proven_leaf"
   (title := "Proven Leaf")
   (keyDeclaration := true)
-  (message := "A proven leaf node - no dependencies")
-  (statement := /-- A proven leaf node with no dependencies. -/)]
-theorem proven_leaf : True := trivial
+  (message := "A proven leaf node - no dependencies, complete proof")
+  (statement := /-- A proven leaf node with no dependencies.
+
+  This is a simple theorem that we can prove completely.
+  Since it has no dependencies, it will be marked as "fullyProven"
+  automatically by the graph analysis. -/)]
+theorem proven_leaf : ∀ (P : Prop), P → P := by
+  -- This is a complete proof of the identity function on propositions
+  -- Step 1: Introduce the proposition P
+  intro P
+  -- Step 2: Introduce the hypothesis h : P
+  intro h
+  -- Step 3: Return h as our proof of P
+  exact h  -- QED: we've proven P → P
 
 @[blueprint "proven_mid"
   (title := "Proven Mid")
-  (statement := /-- A proven node in the middle of the chain. \uses{also_sorry, proven_leaf} -/)
+  (message := "A proven node that depends on both sorry and proven nodes")
+  (statement := /-- A proven node in the middle of the chain.
+
+  This node has a complete proof but depends on:
+  - also_sorry (which has a sorry)
+  - proven_leaf (which is complete)
+
+  Because of the sorry dependency, this cannot be "fullyProven".
+
+  \uses{also_sorry, proven_leaf} -/)
   (uses := ["also_sorry", "proven_leaf"])]
-theorem proven_mid : True := trivial
+theorem proven_mid : True ∧ True := by
+  -- A slightly more interesting proof using constructor
+  constructor  -- splits into two goals
+  · -- First goal: prove True
+    trivial  -- inline: True is trivially true
+  · -- Second goal: prove True
+    -- Using exact instead of trivial for variety
+    exact trivial
 
 @[blueprint "proven_chain"
   (title := "Proven Chain")
-  (statement := /-- A proven node continuing the chain. \uses{proven_mid} -/)
-  (uses := ["proven_mid"])]
-theorem proven_chain : True := trivial
+  (statement := /-- A proven node continuing the chain.
 
--- fullyProven: Auto-computed (all ancestors are proven/fullyProven)
--- These use proven_leaf so the dependency chain is: proven_leaf -> fully_chain_1 -> fully_chain_2 -> fully_chain_3
--- The fullyProven status is now computed automatically by the graph builder
+  Demonstrates longer dependency chains and how status propagates.
+
+  \uses{proven_mid} -/)
+  (uses := ["proven_mid"])]
+theorem proven_chain : True ∨ False := by
+  -- We prove True ∨ False by proving the left disjunct
+  -- This is a standard technique in constructive logic
+  left  -- choose to prove the left side
+  -- Now we just need to prove True
+  trivial  -- easy!
+
+/-! ## FullyProven Status Demonstrations
+
+The "fullyProven" status is AUTO-COMPUTED by the graph analysis.
+A node is fullyProven if:
+1. It has a complete proof (no sorry)
+2. ALL of its dependencies are also fullyProven
+
+This creates a "proven chain" from leaves upward.
+-/
+
+-- This chain starts from proven_leaf (which has no deps)
+-- So all nodes in this chain will be fullyProven
 @[blueprint "fully_chain_1"
   (title := "Fully Chain 1")
   (keyDeclaration := true)
-  (message := "First in the fully proven chain")
-  (statement := /-- First node in the fully proven chain. \uses{proven_leaf} -/)
+  (message := "First in the fully proven chain - starts from proven_leaf")
+  (statement := /-- First node in the fully proven chain.
+
+  This depends only on proven_leaf, which has no dependencies.
+  Therefore, this entire dependency tree is complete and verified.
+
+  \uses{proven_leaf} -/)
   (uses := ["proven_leaf"])]
-theorem fully_chain_1 : True := proven_leaf
+theorem fully_chain_1 : ∀ (P : Prop), P → P := by
+  -- We can use proven_leaf directly since it proves the same thing!
+  exact proven_leaf  -- reusing the leaf theorem
 
 @[blueprint "fully_chain_2"
   (title := "Fully Chain 2")
-  (statement := /-- Second node in the fully proven chain. \uses{fully_chain_1} -/)
+  (statement := /-- Second node in the fully proven chain.
+
+  The dependency chain so far:
+  proven_leaf → fully_chain_1 → fully_chain_2
+
+  All nodes in this chain are completely verified.
+
+  \uses{fully_chain_1} -/)
   (uses := ["fully_chain_1"])]
-theorem fully_chain_2 : True := fully_chain_1
+theorem fully_chain_2 : ∀ (P Q : Prop), P → (Q → P) := by
+  -- A more interesting proof showing weakening
+  intro P Q  -- introduce both propositions
+  intro hP   -- assume P
+  intro _hQ  -- assume Q (but we won't use it)
+  -- We need to prove P, and we have hP : P
+  exact hP  -- done!
 
 @[blueprint "fully_chain_3"
   (title := "Fully Chain 3")
-  (statement := /-- Third node in the fully proven chain. \uses{fully_chain_2} -/)
-  (uses := ["fully_chain_2"])]
-theorem fully_chain_3 : True := fully_chain_2
+  (statement := /-- Third node in the fully proven chain.
 
--- mathlibReady: Manual flag
+  The complete verified chain:
+  proven_leaf → fully_chain_1 → fully_chain_2 → fully_chain_3
+
+  All ancestors are proven, so this is fullyProven.
+
+  \uses{fully_chain_2} -/)
+  (uses := ["fully_chain_2"])]
+theorem fully_chain_3 : ∀ (P : Prop), P → P ∨ P := by
+  -- Proof that P implies P ∨ P
+  intro P hP  -- introduce P and hypothesis hP : P
+  -- We can prove P ∨ P by proving either side
+  left   -- choose left disjunct
+  exact hP  -- use our hypothesis
+
+/-! ## MathlibReady Status Demonstration
+
+The "mathlibReady" status is a MANUAL flag indicating that a theorem
+is ready for submission to mathlib (or has been submitted).
+-/
+
 @[blueprint "mathlib_theorem" (mathlibReady := true)
-  (title := "Mathlib Theorem")
+  (title := "Mathlib Ready Theorem")
   (keyDeclaration := true)
-  (message := "Ready for mathlib submission")
-  (statement := /-- A theorem ready for mathlib. \uses{fully_chain_1} -/)
+  (message := "Ready for mathlib submission - clean proof, good docs")
+  (misc := "PR #12345 submitted")
+  (statement := /-- A theorem ready for mathlib submission.
+
+  This theorem meets mathlib standards:
+  - Clear mathematical statement
+  - Clean, idiomatic proof
+  - Good documentation
+  - No unnecessary dependencies
+
+  \uses{fully_chain_1} -/)
   (uses := ["fully_chain_1"])]
-theorem mathlib_theorem : True := trivial
+theorem mathlib_theorem : ∀ (P Q R : Prop), (P → Q) → (Q → R) → (P → R) := by
+  -- Proof of transitivity of implication
+  -- This is a fundamental theorem in propositional logic
+  intro P Q R  -- introduce the three propositions
+  intro hPQ    -- hypothesis: P → Q
+  intro hQR    -- hypothesis: Q → R
+  intro hP     -- hypothesis: P (we need to prove R)
+  -- Chain the implications: P → Q → R
+  apply hQR    -- suffices to prove Q
+  apply hPQ    -- suffices to prove P
+  exact hP     -- we have P
 
 /-! ## Disconnected Cycle: 2 Nodes
 
-These nodes form a cycle (A -> B -> A) and are NOT connected to the main graph.
+These nodes form a cycle (A → B → A) and are NOT connected to the main graph.
 This tests both cycle detection and disconnected component detection.
+
+The graph validator should report:
+1. A disconnected component containing {cycle_a, cycle_b}
+2. A cycle: cycle_a → cycle_b → cycle_a
 -/
 
+-- Comment explaining the cycle
+-- These two nodes reference each other, creating a dependency cycle
+-- Cycles are usually a sign of a logical error in the blueprint
 @[blueprint "cycle_a"
   (title := "Cycle A")
   (potentialIssue := "Part of a cyclic dependency - needs restructuring")
-  (statement := /-- Part of a cycle (disconnected from main graph). \uses{cycle_b} -/)
+  (message := "This node is in a cycle with cycle_b")
+  (statement := /-- Part of a cycle (disconnected from main graph).
+
+  This demonstrates what happens when you have circular dependencies:
+  - cycle_a depends on cycle_b
+  - cycle_b depends on cycle_a
+
+  This is usually an error that needs to be fixed by:
+  1. Breaking one of the dependencies
+  2. Restructuring the lemmas
+  3. Finding a common base lemma
+
+  \uses{cycle_b} -/)
   (uses := ["cycle_b"])]
-theorem cycle_a : True := trivial
+theorem cycle_a : True ↔ True := by
+  -- Proof of True ↔ True (trivial but demonstrates the cycle issue)
+  constructor  -- split into two directions
+  · intro h; exact h  -- forward direction
+  · intro h; exact h  -- backward direction
 
 @[blueprint "cycle_b"
   (title := "Cycle B")
   (potentialIssue := "Part of a cyclic dependency - needs restructuring")
-  (statement := /-- Part of a cycle (disconnected from main graph). \uses{cycle_a} -/)
+  (message := "This node is in a cycle with cycle_a")
+  (statement := /-- Part of a cycle (disconnected from main graph).
+
+  The other half of the cycle_a ↔ cycle_b dependency cycle.
+
+  \uses{cycle_a} -/)
   (uses := ["cycle_a"])]
-theorem cycle_b : True := trivial
+theorem cycle_b : True ↔ True := by
+  -- Same proof structure as cycle_a
+  -- In a real project, you'd break this cycle
+  constructor
+  · intro h
+    -- Using a slightly different proof style
+    assumption  -- uses h directly
+  · intro h
+    assumption
+
+-- Final comments in the file
+-- Testing that end-of-file comments work correctly
+-- with multiple lines and various content
 
 end SBSTest.StatusDemo

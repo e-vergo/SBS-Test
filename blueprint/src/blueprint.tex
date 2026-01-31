@@ -125,22 +125,52 @@ making it easier to match opening and closing brackets in complex expressions.
 
 \section{Nested Parentheses}
 
+A basic example with 3 levels of nested parentheses.
+
 \inputleannode{bracket:nested}
 
 \section{Mixed Bracket Types}
+
+Demonstrates parentheses and function application.
 
 \inputleannode{bracket:function}
 
 \section{Type Brackets}
 
+Shows implicit type parameters using curly braces.
+
 \inputleannode{bracket:types}
 
-\section{Deep Nesting}
+\section{Deep Nesting (8 Levels)}
+
+Tests that bracket colors wrap around correctly after 6 colors.
+Level 7 should use color 1 again, level 8 should use color 2.
 
 \inputleannode{bracket:deep}
 
+\section{Mixed Deep Nesting}
+
+Complex expression mixing all bracket types at various depths.
+
+\inputleannode{bracket:mixed_deep}
+
 \section{All Bracket Types}
 
+Combines parentheses, square brackets, and curly braces in realistic code.
+
 \inputleannode{bracket:complex}
+
+\section{Realistic Function}
+
+A more realistic function demonstrating comments and brackets together.
+
+\inputleannode{bracket:realistic}
+
+\section{Extreme Nesting (10 Levels)}
+
+Stress test with 10 levels of bracket nesting to verify wrap-around works
+for two complete color cycles plus extra.
+
+\inputleannode{bracket:extreme}
 
 \end{document}

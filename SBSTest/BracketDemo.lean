@@ -69,7 +69,6 @@ These should be colored differently from parentheses.
 
 @[blueprint "bracket:types"
   (title := "Type Brackets")
-  (keyDeclaration := true)
   (message := "Shows implicit type brackets with curly braces")
   (statement := /-- A theorem with implicit type parameters.
 

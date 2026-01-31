@@ -16,5 +16,10 @@ name = "Dress"
 git = "https://github.com/e-vergo/Dress.git"
 rev = "main"
 
+[[require]]
+name = "verso"
+git = "https://github.com/e-vergo/verso.git"
+rev = "main"
+
 [[lean_lib]]
 name = "SBSTest"

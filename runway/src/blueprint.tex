@@ -173,4 +173,32 @@ for two complete color cycles plus extra.
 
 \inputleannode{bracket:extreme}
 
+\chapter{Security Test}
+
+This chapter tests XSS prevention by using malicious-looking input values
+in the blueprint attribute options. All script tags and HTML should be
+escaped in the output.
+
+\section{XSS Attack Vectors}
+
+These theorems test various XSS attack vectors in user-controlled fields.
+If the security hardening is working, you should see escaped HTML text
+(like \texttt{\&lt;script\&gt;}) instead of executed JavaScript.
+
+\inputleannode{xss_title}
+
+\inputleannode{xss_message}
+
+\inputleannode{xss_blocked}
+
+\inputleannode{xss_issue}
+
+\inputleannode{xss_debt}
+
+\inputleannode{xss_misc}
+
+\inputleannode{xss_label}
+
+\inputleannode{xss_quotes}
+
 \end{document}

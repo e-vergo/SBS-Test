@@ -360,9 +360,9 @@ These checks help catch logical errors in blueprint structure (e.g., the Tao inc
 | fullyProven | Forest Green | #228B22 | Auto-computed (all ancestors proven) |
 | mathlibReady | Light Blue | #87CEEB | `(mathlibReady := true)` |
 
-**Priority order** (highest to lowest): mathlibReady > fullyProven > sorry > proven > ready > notReady
+**Priority order** (highest to lowest): mathlibReady > ready > notReady (manual) > fullyProven > sorry > proven > notReady (default)
 
-The `fullyProven` status is computed via graph traversal: a node is fullyProven if it is proven and all its ancestors are proven or fullyProven.
+The `fullyProven` status is computed via O(V+E) graph traversal with memoization: a node is fullyProven if it is proven and all its ancestors are proven or fullyProven.
 
 ## Screenshots
 
@@ -428,7 +428,7 @@ To create a new blueprint project based on SBS-Test:
 | Repository | Scale |
 |------------|-------|
 | [General_Crystallographic_Restriction](https://github.com/e-vergo/General_Crystallographic_Restriction) | Production example with paper (57 nodes) |
-| [PrimeNumberTheoremAnd](https://github.com/e-vergo/PrimeNumberTheoremAnd) | Large-scale integration (530 nodes) |
+| [PrimeNumberTheoremAnd](https://github.com/e-vergo/PrimeNumberTheoremAnd) | Large-scale integration (591 annotations) |
 
 ## License
 

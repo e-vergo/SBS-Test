@@ -7,11 +7,30 @@ Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo
 
 **Live site:** [e-vergo.github.io/SBS-Test](https://e-vergo.github.io/SBS-Test/)
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [Role in Pipeline](#role-in-pipeline)
+- [Motivation](#motivation-the-tao-incident)
+- [Features Tested](#features-tested)
+- [Node Inventory](#node-inventory-33-total)
+- [Project Structure](#project-structure)
+- [Key Files](#key-files)
+- [Building](#building)
+- [Output Locations](#output-locations)
+- [Configuration](#configuration)
+- [Integration Points](#integration-points)
+- [Validation Features](#validation-features)
+- [Visual Compliance Testing](#visual-compliance-testing)
+- [Tooling](#tooling)
+- [Using as a Template](#using-as-a-template)
+- [Related](#related)
+
 ## Purpose
 
-SBS-Test exists to make toolchain development fast and reliable. It provides:
+SBS-Test is the primary test project for the Side-by-Side Blueprint toolchain. It exists to make development fast and reliable by providing:
 
-1. **Fast iteration** - ~2 minutes vs. 5-20 minutes for production projects
+1. **Fast iteration** - ~2 minute builds vs. 5-20 minutes for production projects
 2. **Complete feature coverage** - All 6 status colors, 8 metadata options, 3 manual flags
 3. **Validation testing** - Intentional graph errors (cycles, disconnected components)
 4. **Security testing** - XSS prevention across all user-controlled fields
@@ -19,6 +38,23 @@ SBS-Test exists to make toolchain development fast and reliable. It provides:
 6. **Template for new projects** - Demonstrates required structure and configuration
 
 The project contains 33 `@[blueprint]` annotated nodes across 4 Lean files plus 1 pure LaTeX node.
+
+## Role in Pipeline
+
+SBS-Test serves as the fast iteration target during toolchain development:
+
+| Project | Nodes | Build Time | Use Case |
+|---------|-------|------------|----------|
+| **SBS-Test** | 33 | ~2 min | Daily development, feature testing |
+| GCR | 57 | ~5 min | Production validation with paper |
+| PNT | 591 | ~20 min | Large-scale stress testing |
+
+**When to use SBS-Test:**
+- Testing changes to SubVerso, LeanArchitect, Dress, Runway, or Verso
+- Developing new CSS/JS features in dress-blueprint-action
+- Validating CI/CD workflow changes
+- Creating visual regression baselines
+- Debugging build pipeline issues
 
 ## Motivation: The Tao Incident
 
@@ -138,6 +174,21 @@ SBS-Test/
 │   └── build_blueprint.sh    # Build script wrapper
 └── images/                   # Screenshots for documentation
 ```
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `SBSTest.lean` | Library root - imports all modules for Lake build |
+| `SBSTest/StatusDemo.lean` | Primary test file: 14 nodes covering all 6 statuses, graph validation |
+| `SBSTest/BracketDemo.lean` | Rainbow bracket stress testing: depths 1-10, all bracket types |
+| `SBSTest/SecurityTest.lean` | XSS prevention: script tags, event handlers, javascript URLs |
+| `runway/src/blueprint.tex` | LaTeX blueprint structure with `\inputleannode{}` and `\inputleanmodule{}` |
+| `runway/src/paper.tex` | Paper with `\paperstatement{}` and `\paperfull{}` hooks |
+| `runway.json` | Runway configuration: title, projectName, assets path |
+| `lakefile.toml` | Lake build configuration with Dress, Verso, mathlib dependencies |
+| `GenerateBlueprint.lean` | Verso SBSBlueprint genre document generator |
+| `GeneratePaper.lean` | Verso VersoPaper genre document generator |
 
 ## Building
 
@@ -357,6 +408,48 @@ name = "generate-paper-verso"
 root = "GeneratePaper"
 ```
 
+## Integration Points
+
+SBS-Test integrates with every component in the toolchain:
+
+### Upstream Dependencies
+
+| Component | Integration |
+|-----------|-------------|
+| **SubVerso** | Syntax highlighting via `BLUEPRINT_DRESS=1` during elaboration |
+| **LeanArchitect** | `@[blueprint]` attribute with all 8 metadata + 3 status options |
+| **Dress** | Artifact generation, graph layout, validation checks |
+| **Runway** | Site generation, dashboard, paper/PDF output |
+| **Verso** | SBSBlueprint and VersoPaper genres via `GenerateBlueprint.lean` |
+| **dress-blueprint-action** | CSS/JS assets via `assetsDir` config |
+
+### Data Flow
+
+```
+@[blueprint "label"] theorem ...
+        |
+        v
+LeanArchitect: Stores Node in environment extension
+        |
+        v
+Dress (BLUEPRINT_DRESS=1): Captures highlighting, writes artifacts
+        |
+        v
+Lake facets: Aggregates into manifest.json
+        |
+        v
+Runway: Generates .lake/build/runway/ site
+```
+
+### Testing Points
+
+SBS-Test validates:
+- **Dress artifacts**: Check `.lake/build/dressed/SBSTest/` for per-declaration output
+- **Manifest generation**: Verify `manifest.json` stats and checkResults
+- **Site output**: Inspect `.lake/build/runway/` pages
+- **Graph layout**: SVG in `dep_graph.html` with correct node positions
+- **Status computation**: `fullyProven` propagation through dependency chains
+
 ## Validation Features
 
 SBS-Test exercises graph validation checks that detect common blueprint errors:
@@ -531,6 +624,36 @@ To create a new blueprint project based on SBS-Test:
    python ../scripts/build.py
    # Open http://localhost:8000
    ```
+
+## Tooling
+
+For comprehensive CLI documentation, see the [Archive & Tooling Hub](../archive/README.md).
+
+**Quick reference for SBS-Test development:**
+
+```bash
+cd /Users/eric/GitHub/Side-By-Side-Blueprint/scripts
+
+# Capture screenshots after build
+sbs capture --project SBSTest --interactive
+
+# Run visual compliance validation
+sbs compliance --project SBSTest
+
+# List archive entries for this project
+sbs archive list --project SBSTest
+
+# Generate trend charts
+sbs archive charts
+```
+
+| Command | Purpose |
+|---------|---------|
+| `sbs capture` | Screenshot all pages |
+| `sbs capture --interactive` | Include hover/click states |
+| `sbs compliance` | AI vision validation |
+| `sbs archive list` | List build history |
+| `sbs archive charts` | Generate visualizations |
 
 ## Related
 

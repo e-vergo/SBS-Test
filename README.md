@@ -22,8 +22,10 @@ Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo
 - [Integration Points](#integration-points)
 - [Validation Features](#validation-features)
 - [Visual Compliance Testing](#visual-compliance-testing)
-- [Tooling](#tooling)
+- [Status Color Model](#status-color-model)
+- [Attribute Options Reference](#attribute-options-reference)
 - [Using as a Template](#using-as-a-template)
+- [Tooling](#tooling)
 - [Related](#related)
 
 ## Purpose
@@ -170,9 +172,14 @@ SBS-Test/
 ├── GeneratePaper.lean        # Verso paper generator executable
 ├── runway.json               # Site configuration
 ├── lakefile.toml             # Lake build configuration
-├── scripts/
-│   └── build_blueprint.sh    # Build script wrapper
-└── images/                   # Screenshots for documentation
+├── images/                   # Screenshots for documentation
+│   ├── Dashboard.png
+│   ├── blueprint.png
+│   ├── dep_graph.png
+│   └── paper_web.png
+└── .github/
+    └── workflows/
+        └── full-blueprint-build-and-deploy.yml
 ```
 
 ## Key Files
@@ -197,14 +204,8 @@ SBS-Test/
 From the Side-by-Side-Blueprint monorepo:
 
 ```bash
-cd /path/to/Side-By-Side-Blueprint/SBS-Test
-python ../scripts/build.py
-```
-
-Or using the shell wrapper:
-
-```bash
-./scripts/build_blueprint.sh
+cd /path/to/Side-By-Side-Blueprint/toolchain/SBS-Test
+python ../../dev/scripts/build.py
 ```
 
 **Expected build time:** ~2 minutes (vs. ~5 minutes for GCR, ~20 minutes for PNT)
@@ -487,7 +488,7 @@ SBS-Test serves as the reference project for the visual compliance validation sy
 ### Screenshot Capture
 
 ```bash
-cd /path/to/Side-By-Side-Blueprint/scripts
+cd /path/to/Side-By-Side-Blueprint/dev/scripts
 
 # Capture screenshots after a build
 python3 -m sbs capture --project SBSTest --interactive
@@ -513,7 +514,7 @@ The compliance system:
 Screenshots are stored in the archive system:
 
 ```
-archive/
+storage/
   SBSTest/
     latest/           # Current capture (overwritten each run)
       capture.json    # Metadata: timestamp, commit, viewport
@@ -526,10 +527,10 @@ archive/
 
 ### Standard Visual Verification Workflow
 
-1. **Build:** `python ../scripts/build.py` (commits, pushes, builds)
+1. **Build:** `python ../../dev/scripts/build.py` (commits, pushes, builds)
 2. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
 3. **Make changes** to CSS/JS/Lean/templates
-4. **Rebuild:** `python ../scripts/build.py`
+4. **Rebuild:** `python ../../dev/scripts/build.py`
 5. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
 6. **Validate:** `python3 -m sbs compliance --project SBSTest`
 
@@ -621,30 +622,34 @@ To create a new blueprint project based on SBS-Test:
 
 5. **Build and verify:**
    ```bash
-   python ../scripts/build.py
-   # Open http://localhost:8000
+   lake exe cache get  # if using mathlib
+   BLUEPRINT_DRESS=1 lake build
+   lake build :blueprint
+   lake exe extract_blueprint graph MyProject
+   lake exe runway build runway.json
+   # Open .lake/build/runway/index.html
    ```
 
 ## Tooling
 
-For comprehensive CLI documentation, see the [Archive & Tooling Hub](../archive/README.md).
+For comprehensive CLI documentation, see the [Storage & Tooling Hub](../../storage/README.md).
 
 **Quick reference for SBS-Test development:**
 
 ```bash
-cd /Users/eric/GitHub/Side-By-Side-Blueprint/scripts
+cd /path/to/Side-By-Side-Blueprint/dev/scripts
 
 # Capture screenshots after build
-sbs capture --project SBSTest --interactive
+python3 -m sbs capture --project SBSTest --interactive
 
 # Run visual compliance validation
-sbs compliance --project SBSTest
+python3 -m sbs compliance --project SBSTest
 
 # List archive entries for this project
-sbs archive list --project SBSTest
+python3 -m sbs archive list --project SBSTest
 
 # Generate trend charts
-sbs archive charts
+python3 -m sbs archive charts
 ```
 
 | Command | Purpose |
@@ -667,20 +672,20 @@ SubVerso -> LeanArchitect -> Dress -> Runway
 
 | Component | Purpose |
 |-----------|---------|
-| [SubVerso](https://github.com/e-vergo/subverso) | Syntax highlighting with O(1) indexed lookups |
-| [LeanArchitect](https://github.com/e-vergo/LeanArchitect) | `@[blueprint]` attribute definition |
-| [Dress](https://github.com/e-vergo/Dress) | Artifact generation, graph layout, validation |
-| [Verso](https://github.com/e-vergo/verso) | Document genres (SBSBlueprint, VersoPaper) |
-| [Runway](https://github.com/e-vergo/Runway) | Site generator |
-| [dress-blueprint-action](https://github.com/e-vergo/dress-blueprint-action) | CI/CD action + CSS/JS assets |
+| [SubVerso](../../forks/subverso/) | Syntax highlighting with O(1) indexed lookups |
+| [LeanArchitect](../../forks/LeanArchitect/) | `@[blueprint]` attribute definition |
+| [Dress](../Dress/) | Artifact generation, graph layout, validation |
+| [Verso](../../forks/verso/) | Document genres (SBSBlueprint, VersoPaper) |
+| [Runway](../Runway/) | Site generator |
+| [dress-blueprint-action](../dress-blueprint-action/) | CI/CD action + CSS/JS assets |
 
 ### Projects
 
 | Project | Description |
 |---------|-------------|
-| [Side-By-Side-Blueprint](https://github.com/e-vergo/Side-By-Side-Blueprint) | Parent monorepo with full toolchain |
-| [General_Crystallographic_Restriction](https://github.com/e-vergo/General_Crystallographic_Restriction) | Production example with paper (57 nodes) |
-| [PrimeNumberTheoremAnd](https://github.com/e-vergo/PrimeNumberTheoremAnd) | Large-scale integration (591 annotations) |
+| [Side-By-Side-Blueprint](../..) | Parent monorepo with full toolchain |
+| [General_Crystallographic_Restriction](../../showcase/General_Crystallographic_Restriction/) | Production example with paper (57 nodes) |
+| [PrimeNumberTheoremAnd](../../showcase/PrimeNumberTheoremAnd/) | Large-scale integration (591 annotations) |
 
 ## License
 

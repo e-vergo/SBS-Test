@@ -25,7 +25,7 @@ Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo
 - [Status Color Model](#status-color-model)
 - [Attribute Options Reference](#attribute-options-reference)
 - [Using as a Template](#using-as-a-template)
-- [Tooling](#tooling)
+- [Tooling & Archive System](#tooling--archive-system)
 - [Related](#related)
 
 ## Purpose
@@ -208,11 +208,18 @@ cd /path/to/Side-By-Side-Blueprint/toolchain/SBS-Test
 python ../../dev/scripts/build.py
 ```
 
+Alternatively, use the convenience script from the monorepo root:
+
+```bash
+cd /path/to/Side-By-Side-Blueprint
+bash dev/build-sbs-test.sh
+```
+
 **Expected build time:** ~2 minutes (vs. ~5 minutes for GCR, ~20 minutes for PNT)
 
 ### Build Script Steps
 
-The build script executes:
+The `build.py` script executes:
 
 1. Validate project (check runway.json, extract projectName)
 2. Kill existing servers on port 8000
@@ -223,10 +230,13 @@ The build script executes:
 7. Fetch mathlib cache
 8. Build project with `BLUEPRINT_DRESS=1`
 9. Build `:blueprint` facet
-10. Generate dependency graph
+10. Generate dependency graph and manifest
 11. Generate site with Runway
 12. Generate paper (HTML + PDF)
-13. Start server at http://localhost:8000
+13. Archive screenshots and metrics
+14. Start server at http://localhost:8000
+
+**Note:** The build script automatically commits and pushes all repository changes. There is no option to skip this—it ensures reproducible builds tied to specific commits.
 
 ### Manual Build Steps
 
@@ -303,8 +313,11 @@ Located in `.lake/build/dressed/`:
 │   ├── BracketDemo/
 │   ├── ModuleRefTest/
 │   └── SecurityTest/
-└── library/
-    └── SBSTest.tex               # Aggregated LaTeX definitions
+├── library/
+│   └── SBSTest.tex               # Aggregated LaTeX definitions
+├── dep-graph.json                # Serialized graph structure
+├── dep-graph.svg                 # Rendered SVG with Sugiyama layout
+└── manifest.json                 # Precomputed stats and validation results
 ```
 
 ### Site Output
@@ -315,10 +328,32 @@ Located in `.lake/build/runway/`:
 |------|---------|
 | `index.html` | Dashboard: stats, key theorems, messages, project notes |
 | `dep_graph.html` | Interactive dependency graph with pan/zoom and modals |
-| `manifest.json` | Precomputed stats, validation results, metadata |
+| `manifest.json` | Copied from Dress; precomputed stats, validation results, metadata |
 | `paper_tex.html` | Paper with MathJax rendering |
 | `paper.pdf` | PDF output (if LaTeX compiler available) |
-| `assets/` | CSS, JavaScript |
+| `assets/` | CSS, JavaScript (copied from `assetsDir` in runway.json) |
+
+### Archive & Metrics
+
+**Screenshots:** Located in `../../dev/storage/SBSTest/` (relative to project root)
+
+```
+dev/storage/
+├── SBSTest/
+│   ├── latest/                   # Current capture (overwritten each build)
+│   │   ├── capture.json          # Metadata: timestamp, commit, viewport, page status
+│   │   ├── dashboard.png
+│   │   ├── dep_graph.png
+│   │   ├── blueprint.png
+│   │   └── *_interactive.png
+│   └── archive/                  # Timestamped history
+│       └── {timestamp}/
+├── unified_ledger.json           # Build metrics and timing (single source of truth)
+├── compliance_ledger.json        # Compliance tracking per page
+└── README.md                     # Central tooling hub documentation
+```
+
+**Refer to:** [`dev/storage/README.md`](../../dev/storage/README.md) for comprehensive CLI documentation (capture, compliance, archive, rubrics).
 
 ### What to Inspect
 
@@ -509,30 +544,40 @@ The compliance system:
 - Detects repo changes and revalidates affected pages
 - Loops until 100% compliance achieved
 
-### Storage
+**See:** [`dev/scripts/VISUAL_COMPLIANCE.md`](../../dev/scripts/VISUAL_COMPLIANCE.md) for comprehensive documentation on the compliance system.
 
-Screenshots are stored in the archive system:
+### Screenshot Storage
+
+Screenshots are stored in the centralized archive system at `dev/storage/`:
 
 ```
-storage/
+dev/storage/
   SBSTest/
-    latest/           # Current capture (overwritten each run)
-      capture.json    # Metadata: timestamp, commit, viewport
+    latest/           # Current capture (overwritten each build)
+      capture.json    # Metadata: timestamp, commit, viewport, page status
       dashboard.png
       dep_graph.png
-      ...
+      paper_tex.png
+      blueprint.png
+      *_interactive.png
     archive/          # Timestamped history
       {timestamp}/
 ```
 
+Metadata about all captures is tracked in:
+- `dev/storage/compliance_ledger.json` - Pass/fail status per page
+- `dev/storage/unified_ledger.json` - Build metrics and timing
+- `dev/storage/COMPLIANCE_STATUS.md` - Human-readable status report
+
 ### Standard Visual Verification Workflow
 
-1. **Build:** `python ../../dev/scripts/build.py` (commits, pushes, builds)
-2. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
-3. **Make changes** to CSS/JS/Lean/templates
-4. **Rebuild:** `python ../../dev/scripts/build.py`
-5. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
-6. **Validate:** `python3 -m sbs compliance --project SBSTest`
+1. **Build:** `python ../../dev/scripts/build.py` (auto-archives old screenshots, captures new ones)
+2. **Make changes** to CSS/JS/Lean/templates
+3. **Rebuild:** `python ../../dev/scripts/build.py` (auto-captures for comparison)
+4. **Verify:** `python3 -m sbs compare` (view differences between old and new captures)
+5. **Validate:** `python3 -m sbs compliance --project SBSTest` (AI vision analysis)
+
+The build script automatically handles screenshot management—no manual capture steps needed.
 
 ## Status Color Model
 
@@ -630,11 +675,17 @@ To create a new blueprint project based on SBS-Test:
    # Open .lake/build/runway/index.html
    ```
 
-## Tooling
+## Tooling & Archive System
 
-For comprehensive CLI documentation, see the [Storage & Tooling Hub](../../storage/README.md).
+For comprehensive CLI documentation, see the **[Storage & Tooling Hub](../../dev/storage/README.md)** (centralized reference).
 
-**Quick reference for SBS-Test development:**
+This hub documents:
+- `sbs capture` / `sbs compliance` - Visual testing workflows
+- `sbs rubric` - Custom quality rubrics
+- `sbs archive` - Build history, metrics, iCloud sync
+- Validator infrastructure and quality scoring (T1-T8 test suite)
+
+### Quick Reference for SBS-Test Development
 
 ```bash
 cd /path/to/Side-By-Side-Blueprint/dev/scripts
@@ -645,20 +696,32 @@ python3 -m sbs capture --project SBSTest --interactive
 # Run visual compliance validation
 python3 -m sbs compliance --project SBSTest
 
-# List archive entries for this project
+# List build history for this project
 python3 -m sbs archive list --project SBSTest
 
 # Generate trend charts
 python3 -m sbs archive charts
 ```
 
+### Common Commands
+
 | Command | Purpose |
 |---------|---------|
-| `sbs capture` | Screenshot all pages |
-| `sbs capture --interactive` | Include hover/click states |
-| `sbs compliance` | AI vision validation |
-| `sbs archive list` | List build history |
-| `sbs archive charts` | Generate visualizations |
+| `sbs capture --project SBSTest` | Screenshot all pages (static) |
+| `sbs capture --project SBSTest --interactive` | Include hover/click states |
+| `sbs compliance --project SBSTest` | AI vision validation against criteria |
+| `sbs compare` | View differences between captures |
+| `sbs archive list --project SBSTest` | List build history |
+| `sbs archive charts` | Generate timing/LOC trend visualizations |
+
+### Build & Archive Integration
+
+The `build.py` script automatically:
+- Captures screenshots after successful builds (via `sbs capture --interactive`)
+- Archives previous screenshots with timestamps
+- Updates `dev/storage/unified_ledger.json` with build metrics
+- Updates `dev/storage/compliance_ledger.json` with page status
+- Syncs to iCloud (if configured)
 
 ## Related
 

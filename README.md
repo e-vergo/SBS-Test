@@ -3,21 +3,32 @@
 ![Lean](https://img.shields.io/badge/Lean-v4.27.0-blue)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
-Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo/Side-By-Side-Blueprint) toolchain. Fast iteration environment for toolchain development and feature demonstration.
+Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo/Side-By-Side-Blueprint) toolchain. Fast iteration environment for toolchain development, feature demonstration, and visual compliance testing.
 
 **Live site:** [e-vergo.github.io/SBS-Test](https://e-vergo.github.io/SBS-Test/)
 
 ## Purpose
 
-SBS-Test provides a controlled environment for testing all features of the blueprint system with fast iteration times (~2 minutes vs. 20+ minutes for production projects). It serves as:
+SBS-Test exists to make toolchain development fast and reliable. It provides:
 
-1. **Development testbed** - Fast feedback loop when making toolchain changes
-2. **Feature demonstration** - All 6 status colors, 8 metadata options, 3 manual flags
+1. **Fast iteration** - ~2 minutes vs. 5-20 minutes for production projects
+2. **Complete feature coverage** - All 6 status colors, 8 metadata options, 3 manual flags
 3. **Validation testing** - Intentional graph errors (cycles, disconnected components)
 4. **Security testing** - XSS prevention across all user-controlled fields
-5. **Visual regression baseline** - Reference screenshots for compliance validation
+5. **Visual regression baseline** - Reference screenshots for automated compliance validation
+6. **Template for new projects** - Demonstrates required structure and configuration
 
-The project contains 33 `@[blueprint]` annotated declarations across 4 Lean files plus 1 pure LaTeX node.
+The project contains 33 `@[blueprint]` annotated nodes across 4 Lean files plus 1 pure LaTeX node.
+
+## Motivation: The Tao Incident
+
+This project supports the Side-by-Side Blueprint toolchain, which was motivated by a January 2026 incident on Terence Tao's Prime Number Theorem project:
+
+> "When reviewing the blueprint graph I noticed an oddity in the Erdos 392 project: the final theorems were mysteriously disconnected from the rest of the lemmas; and the (AI-provided) proofs were suspiciously short. After some inspection I realized the problem: I had asked to prove statements that n! can be factored into **at least** n factors... when in fact the Erdos problem asks for **at most** n factors."
+>
+> -- Terence Tao, PNT+ Zulip
+
+SBS-Test specifically exercises the validation checks (connectivity, cycles) that would have caught this error automatically. The disconnected cycle (`cycle_a`, `cycle_b`) demonstrates exactly this failure mode.
 
 ## Features Tested
 
@@ -31,6 +42,7 @@ The project contains 33 `@[blueprint]` annotated declarations across 4 Lean file
 | Module references | `\inputleanmodule{ModuleName}` expansion |
 | Security | XSS prevention in all user-controlled fields |
 | Output formats | Dashboard, side-by-side pages, dependency graph, paper (HTML + PDF) |
+| Verso documents | SBSBlueprint genre with hook directives |
 
 ## Node Inventory (33 Total)
 
@@ -144,7 +156,9 @@ Or using the shell wrapper:
 ./scripts/build_blueprint.sh
 ```
 
-### Build Steps
+**Expected build time:** ~2 minutes (vs. ~5 minutes for GCR, ~20 minutes for PNT)
+
+### Build Script Steps
 
 The build script executes:
 
@@ -161,8 +175,6 @@ The build script executes:
 11. Generate site with Runway
 12. Generate paper (HTML + PDF)
 13. Start server at http://localhost:8000
-
-**Expected build time:** ~2 minutes (vs. ~5 minutes for GCR, ~20 minutes for PNT)
 
 ### Manual Build Steps
 
@@ -252,7 +264,7 @@ Located in `.lake/build/runway/`:
 | `index.html` | Dashboard: stats, key theorems, messages, project notes |
 | `dep_graph.html` | Interactive dependency graph with pan/zoom and modals |
 | `manifest.json` | Precomputed stats, validation results, metadata |
-| `paper.html` | Paper with MathJax rendering |
+| `paper_tex.html` | Paper with MathJax rendering |
 | `paper.pdf` | PDF output (if LaTeX compiler available) |
 | `assets/` | CSS, JavaScript |
 
@@ -361,6 +373,8 @@ The `cycle_a` and `cycle_b` nodes are not connected to the main graph. The valid
 }
 ```
 
+This is the exact failure mode from the Tao incident: a "proven" theorem that wasn't actually connected to the foundational lemmas it claimed to use.
+
 ### Cycle Detection
 
 `cycle_a` and `cycle_b` form a mutual dependency:
@@ -371,7 +385,60 @@ The `cycle_a` and `cycle_b` nodes are not connected to the main graph. The valid
 }
 ```
 
-These checks help catch logical errors in blueprint structure (e.g., the Tao incident where a disconnected lemma was not used in the main proof).
+Cycles indicate logical errors in the dependency structure that need to be resolved.
+
+## Visual Compliance Testing
+
+SBS-Test serves as the reference project for the visual compliance validation system:
+
+### Screenshot Capture
+
+```bash
+cd /path/to/Side-By-Side-Blueprint/scripts
+
+# Capture screenshots after a build
+python3 -m sbs capture --project SBSTest --interactive
+```
+
+Captures 8 pages plus interactive states (theme toggles, zoom controls, node clicks, proof toggles).
+
+### Compliance Validation
+
+```bash
+# Run compliance validation
+python3 -m sbs compliance --project SBSTest
+```
+
+The compliance system:
+- Uses AI vision analysis to validate screenshots against expected criteria
+- Tracks pass/fail status per page in a persistent ledger
+- Detects repo changes and revalidates affected pages
+- Loops until 100% compliance achieved
+
+### Storage
+
+Screenshots are stored in the archive system:
+
+```
+archive/
+  SBSTest/
+    latest/           # Current capture (overwritten each run)
+      capture.json    # Metadata: timestamp, commit, viewport
+      dashboard.png
+      dep_graph.png
+      ...
+    archive/          # Timestamped history
+      {timestamp}/
+```
+
+### Standard Visual Verification Workflow
+
+1. **Build:** `python ../scripts/build.py` (commits, pushes, builds)
+2. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
+3. **Make changes** to CSS/JS/Lean/templates
+4. **Rebuild:** `python ../scripts/build.py`
+5. **Capture:** `python3 -m sbs capture --project SBSTest --interactive`
+6. **Validate:** `python3 -m sbs compliance --project SBSTest`
 
 ## Status Color Model
 
@@ -432,22 +499,6 @@ The `fullyProven` status is computed via O(V+E) graph traversal with memoization
 
 ![Paper](images/paper_web.png)
 *Paper output with status badges*
-
-## Visual Compliance Testing
-
-SBS-Test serves as the reference project for visual compliance validation:
-
-```bash
-cd /path/to/Side-By-Side-Blueprint/scripts
-
-# Capture screenshots after a build
-python3 -m sbs capture --project SBSTest --interactive
-
-# Run compliance validation
-python3 -m sbs compliance --project SBSTest
-```
-
-The compliance system captures 8+ pages and validates them against expected criteria.
 
 ## Using as a Template
 

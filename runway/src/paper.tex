@@ -20,42 +20,66 @@
 \chapter{Introduction}
 
 This paper demonstrates all 6 status badges with colored indicator dots.
+Each status corresponds to a formalization state for declarations over $\N$ and $\Z$.
+For a given declaration $d$, we track whether $d$ has been formalized, whether its
+proof is complete, and whether all of its dependencies are resolved.
 
 \chapter{All Six Status Types}
 
 \section{Not Ready (Sandy Brown)}
 
-Nodes that are not yet formalized:
+A node is \emph{not ready} when it has not yet been prepared for formalization.
+For example, a foundational lemma about elements $n \in \N$ may require
+prerequisite definitions before formalization can begin.
+
+\paperstatement{foundation}
+
+The full declaration with proof:
 
 \paperfull{foundation}
 
 \section{Ready (Light Sea Green)}
 
-Nodes marked ready for formalization:
+A node is \emph{ready} when the proof strategy is clear and formalization can proceed.
+Consider a proposition $P(n)$ for all $n \in \N$: once the dependencies are in place
+and the approach is understood, the node transitions to ready status.
+
+\paperstatement{ready_to_prove}
+
+The full declaration with proof:
 
 \paperfull{ready_to_prove}
 
 \section{Sorry (Dark Red)}
 
-Nodes with incomplete proofs containing sorry:
+When a proof contains \texttt{sorry}, the node receives the sorry status automatically.
+This indicates that the formalization is incomplete---for instance, a lemma
+$\forall x \in \Z,\; f(x) = f(-x)$ might have a partial proof with gaps remaining.
 
 \paperfull{has_sorry}
 
 \section{Proven (Light Green)}
 
-Nodes with complete proofs but incomplete dependencies:
+A node is \emph{proven} when its proof is complete but some of its dependencies
+are not yet fully resolved. For a chain of lemmas $L_1 \to L_2 \to \cdots \to L_k$
+where $k \geq 2$, a node $L_i$ may be proven while $L_{i-1}$ still has sorry.
 
 \paperfull{proven_mid}
 
 \section{Fully Proven (Forest Green)}
 
-Nodes where both the proof and all dependencies are complete:
+A node is \emph{fully proven} when both its own proof and all transitive
+dependencies are complete. Given a dependency chain where each $L_i$ satisfies
+$L_i : \N \to \text{Prop}$, the terminal node achieves fully proven status only
+when every ancestor in the chain is also proven.
 
 \paperfull{fully_chain_1}
 
 \section{Mathlib Ready (Light Blue)}
 
-Nodes ready for or already in Mathlib:
+Nodes marked \emph{mathlib ready} are candidates for upstreaming to Mathlib.
+These represent results of general interest, such as a theorem about
+$\Z$-module homomorphisms $\varphi : \Z^n \to \Z^m$ where $n, m \in \N$.
 
 \paperfull{mathlib_theorem}
 

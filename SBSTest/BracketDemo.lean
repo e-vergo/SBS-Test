@@ -230,30 +230,30 @@ They test the tactic state toggle feature in the Side-by-Side display.
   (message := "Multi-step induction proof demonstrating tactic state display")
   (statement := /-- Commutativity of natural number addition, proven by induction.
 
-  This proof uses structured tactics with `induction` and `simp`:
-  - Base case: `n + 0 = 0 + n` follows from `add_zero` and `zero_add`
-  - Inductive case: Uses `add_succ` and `succ_add` with the induction hypothesis -/)]
+  This proof uses structured tactics with `induction` and `omega`:
+  - Base case: `n + 0 = 0 + n` solved by omega
+  - Inductive case: Uses omega with the induction hypothesis -/)]
 theorem nat_add_comm_tactic (n m : Nat) : n + m = m + n := by
   induction m with
-  | zero => simp [Nat.add_zero, Nat.zero_add]
-  | succ m ih => simp [Nat.add_succ, Nat.succ_add, ih]
+  | zero => omega
+  | succ m ih => omega
 
 @[blueprint "bracket:list_length_append_tactic"
   (title := "List append length (tactic proof)")
   (keyDeclaration := true)
-  (message := "Induction on lists with explicit type manipulation")
+  (message := "Induction on lists with simp and arithmetic")
   (statement := /-- The length of appended lists equals the sum of their lengths.
 
   This proof demonstrates:
   - Induction on the list structure
-  - Using `simp` with specific lemmas
-  - Explicit term-level manipulation with `▸` and `congrArg` -/)]
+  - Using `simp` to simplify list operations
+  - Using `omega` for arithmetic -/)]
 theorem list_length_append_tactic {α : Type} (xs ys : List α) :
     (xs ++ ys).length = xs.length + ys.length := by
   induction xs with
-  | nil => rfl
+  | nil => simp
   | cons x xs ih =>
-    simp [List.length_cons, List.cons_append]
-    exact Nat.succ_add xs.length ys.length ▸ congrArg Nat.succ ih
+    simp only [List.cons_append, List.length_cons]
+    omega
 
 end SBSTest.BracketDemo

@@ -219,4 +219,41 @@ def extreme_nesting : Nat → Nat → Nat := fun a b =>
 --   - Code-like: if x then y else z
 -- End of comment block
 
+/-! ## Tactic-Mode Proofs
+
+These theorems demonstrate multi-step tactic proofs with `by` blocks.
+They test the tactic state toggle feature in the Side-by-Side display.
+-/
+
+@[blueprint "bracket:nat_add_comm_tactic"
+  (title := "Nat.add commutativity (tactic proof)")
+  (message := "Multi-step induction proof demonstrating tactic state display")
+  (statement := /-- Commutativity of natural number addition, proven by induction.
+
+  This proof uses structured tactics with `induction` and `simp`:
+  - Base case: `n + 0 = 0 + n` follows from `add_zero` and `zero_add`
+  - Inductive case: Uses `add_succ` and `succ_add` with the induction hypothesis -/)]
+theorem nat_add_comm_tactic (n m : Nat) : n + m = m + n := by
+  induction m with
+  | zero => simp [Nat.add_zero, Nat.zero_add]
+  | succ m ih => simp [Nat.add_succ, Nat.succ_add, ih]
+
+@[blueprint "bracket:list_length_append_tactic"
+  (title := "List append length (tactic proof)")
+  (keyDeclaration := true)
+  (message := "Induction on lists with explicit type manipulation")
+  (statement := /-- The length of appended lists equals the sum of their lengths.
+
+  This proof demonstrates:
+  - Induction on the list structure
+  - Using `simp` with specific lemmas
+  - Explicit term-level manipulation with `▸` and `congrArg` -/)]
+theorem list_length_append_tactic {α : Type} (xs ys : List α) :
+    (xs ++ ys).length = xs.length + ys.length := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    simp [List.length_cons, List.cons_append]
+    exact Nat.succ_add xs.length ys.length ▸ congrArg Nat.succ ih
+
 end SBSTest.BracketDemo

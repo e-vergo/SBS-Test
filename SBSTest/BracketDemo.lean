@@ -98,7 +98,6 @@ Color mapping (1-indexed):
 -- This tests that comments don't interfere with bracket counting
 @[blueprint "bracket:deep"
   (title := "Deep Nesting (8 Levels)")
-  (keyDeclaration := true)
   (message := "Tests bracket color wrap-around after 6 colors")
   (statement := /-- Definition with 8 levels of nested parentheses.
 
@@ -240,7 +239,6 @@ theorem nat_add_comm_tactic (n m : Nat) : n + m = m + n := by
 
 @[blueprint "bracket:list_length_append_tactic"
   (title := "List append length (tactic proof)")
-  (keyDeclaration := true)
   (message := "Induction on lists with simp and arithmetic")
   (statement := /-- The length of appended lists equals the sum of their lengths.
 

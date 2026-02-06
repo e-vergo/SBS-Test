@@ -181,6 +181,39 @@ Multi-step tactic proofs demonstrating tactic state toggles.
 
 \inputleannode{bracket:list_length_append_tactic}
 
+\chapter{Delimiter Syntax Demo}
+
+This chapter demonstrates the two authoring modes for embedding TeX statements
+in Lean files. The traditional mode uses the \texttt{(statement := /-- ... -/)}
+attribute option, while the new delimiter mode uses \texttt{/-\%\%...\%\%-/} block
+comments or \texttt{--\%\%} line comments.
+
+\section{Attribute-Based Statements}
+
+The traditional approach embeds the TeX statement directly in the
+\texttt{@[blueprint]} attribute.
+
+\inputleannode{attr_demo}
+
+\inputleannode{attr_logic}
+
+\section{Block Delimiter Statements}
+
+Block delimiters use \texttt{/-\%\%...\%\%-/} comments to associate
+TeX blocks with the next \texttt{@[blueprint]} declaration.
+
+\inputleannode{delim_block_demo}
+
+\inputleannode{delim_block_dne}
+
+\section{Line Delimiter Statements}
+
+Line delimiters use consecutive \texttt{--\%\%} comments for short TeX blocks.
+
+\inputleannode{delim_line_demo}
+
+\inputleannode{delim_line_id}
+
 \chapter{Security Test}
 
 This chapter tests XSS prevention by using malicious-looking input values

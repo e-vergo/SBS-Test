@@ -3,7 +3,7 @@
 ![Lean](https://img.shields.io/badge/Lean-v4.27.0-blue)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
-Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo/Side-By-Side-Blueprint) toolchain. Fast iteration environment for toolchain development, feature demonstration, and visual compliance testing.
+Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo/SLS-Strange-Loop-Station) toolchain. Fast iteration environment for toolchain development, feature demonstration, and visual compliance testing.
 
 **Live site:** [e-vergo.github.io/SBS-Test](https://e-vergo.github.io/SBS-Test/)
 

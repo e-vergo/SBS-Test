@@ -13,8 +13,11 @@ rev = "v4.27.0"
 
 [[require]]
 name = "Dress"
-git = "https://github.com/e-vergo/Dress.git"
-rev = "main"
+path = "../Dress"
+
+[[require]]
+name = "subverso"
+path = "../../forks/subverso"
 
 [[require]]
 name = "verso"

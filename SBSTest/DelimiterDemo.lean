@@ -41,9 +41,7 @@ associates the TeX block with the next blueprint-annotated declaration.
 -/
 
 /-%%
-\begin{theorem}[Commutativity of Addition]\label{delim_block_demo}
 For all natural numbers $n$ and $m$, we have $n + m = m + n$.
-\end{theorem}
 %%-/
 @[blueprint "delim_block_demo"
   (title := "Block Delimiter Demo")]
@@ -58,10 +56,8 @@ Each line after the `--%%` prefix is concatenated to form
 the full TeX block, associated with the next declaration.
 -/
 
---%%\begin{definition}\label{delim_line_demo}
 --%%A simple constant equal to $42$, demonstrating single-line
 --%%delimiter syntax for short TeX blocks.
---%%\end{definition}
 @[blueprint "delim_line_demo"
   (title := "Line Delimiter Demo")]
 def delim_line_demo : Nat := 42
@@ -89,10 +85,8 @@ theorem attr_logic : ∀ (P Q : Prop), (P → Q) → P → Q := by
 
 -- A second block delimiter example
 /-%%
-\begin{lemma}[Double Negation Introduction]\label{delim_block_dne}
 For any proposition $P$, if $P$ holds then $\lnot\lnot P$ holds.
 That is, $P \to \lnot\lnot P$.
-\end{lemma}
 %%-/
 @[blueprint "delim_block_dne"
   (title := "Double Negation Intro")
@@ -102,10 +96,8 @@ theorem delim_block_dne : ∀ (P : Prop), P → ¬¬P := by
   exact hNotP hP
 
 -- A second single-line delimiter example
---%%\begin{definition}\label{delim_line_id}
 --%%The polymorphic identity function: for any type $\alpha$,
 --%%maps each element to itself.
---%%\end{definition}
 @[blueprint "delim_line_id"
   (title := "Identity Function")]
 def delim_line_id (α : Type) (a : α) : α := a

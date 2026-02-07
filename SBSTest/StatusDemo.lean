@@ -36,6 +36,8 @@ Each node has a specific status to test the 6-color model.
 @[blueprint "foundation" (notReady := true)
   (title := "Foundation")
   (message := "Foundation lemma - manually marked not ready for formalization")
+  (above := /-- This section introduces the foundational axiom for our test project.
+  The result below connects the base axiom to the rest of the dependency graph. -/)
   (statement := /-- Foundation lemma, manually marked notReady.
 
   This represents a lemma that exists in the informal blueprint but
@@ -45,6 +47,8 @@ Each node has a specific status to test the 6-color model.
   - Depends on unformalized concepts
 
   \uses{base_axiom} -/)
+  (below := /-- The foundation lemma is a prerequisite for all subsequent results
+  in the formalization chain. See the ready-to-prove nodes next. -/)
   (uses := ["base_axiom"])]
 theorem foundation : True := by
   -- Even though we have a proof, the manual notReady flag takes precedence
@@ -78,12 +82,18 @@ theorem ready_to_prove : True := by
 
 @[blueprint "another_ready" (ready := true)
   (title := "Another Ready")
+  (above := /-- This paragraph introduces the second ready-status lemma.
+  It includes inline math $\alpha + \beta = \gamma$ to test LaTeX rendering
+  in above blocks. The lemma below extends the ready-to-prove chain. -/)
   (statement := /-- Another lemma marked as ready.
 
   This tests that multiple ready nodes display correctly
   in the dependency graph and dashboard.
 
   \uses{ready_to_prove} -/)
+  (below := /-- Having verified the above, we proceed to the sorry-status
+  demonstrations which show how incomplete proofs propagate through
+  the dependency graph. See the next section for details. -/)
   (uses := ["ready_to_prove"])]
 theorem another_ready : True := by
   -- Comment inside the proof block

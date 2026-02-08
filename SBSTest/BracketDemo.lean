@@ -38,7 +38,8 @@ These examples show simple bracket patterns with various nesting depths.
   This theorem demonstrates the associativity property:
   $$(a + (b + c)) = ((a + b) + c)$$
 
-  The proof uses the `omega` tactic which handles linear arithmetic. -/)]
+  The proof uses the `omega` tactic which handles linear arithmetic. -/)
+  (proof := /-- Discharged in one step by the \texttt{omega} tactic, which decides linear arithmetic over the naturals. -/)]
 theorem nested_parens (a b c : Nat) : (a + (b + c)) = ((a + b) + c) := by
   -- This comment explains the proof strategy
   -- We use omega because it handles linear arithmetic over naturals
@@ -53,7 +54,8 @@ theorem nested_parens (a b c : Nat) : (a + (b + c)) = ((a + b) + c) := by
   This definition uses:
   - Parentheses for function application
   - Square brackets implicitly in List operations
-  - Lambda expressions with arrow types -/)]
+  - Lambda expressions with arrow types -/)
+  (proof := /-- Constructed by mapping a lambda that applies $f$ twice to each element of the input list. -/)]
 def bracket_function (f : Nat → Nat) (xs : List Nat) : List Nat :=
   -- Map applies f twice to each element
   -- This creates nested function applications
@@ -73,7 +75,8 @@ These should be colored differently from parentheses.
   (statement := /-- A theorem with implicit type parameters.
 
   The `{α : Type}` syntax introduces an implicit type parameter.
-  Lean will infer the actual type from context. -/)]
+  Lean will infer the actual type from context. -/)
+  (proof := /-- The hypothesis $h : x \in s$ is exactly the goal, so we apply it directly. -/)]
 theorem type_example {α : Type} (s : Set α) (x : α) (h : x ∈ s) : x ∈ s := by
   -- The proof is trivial since h is exactly what we need
   exact h  -- h : x ∈ s is our hypothesis
@@ -105,7 +108,8 @@ Color mapping (1-indexed):
   wrap around correctly after the 6th level:
   - Levels 1-6: Each gets a unique color
   - Level 7: Wraps to color 1
-  - Level 8: Wraps to color 2 -/)]
+  - Level 8: Wraps to color 2 -/)
+  (proof := /-- Defined as a single arithmetic expression with eight nested parenthesised additions, evaluated at compile time. -/)]
 def deep_nesting : Nat :=
   -- Level:  1 2 3 4 5 6 7 8
   --         ( ( ( ( ( ( ( (
@@ -121,7 +125,8 @@ def deep_nesting : Nat :=
   This combines:
   - Curly braces for implicit arguments
   - Parentheses for grouping
-  - Square brackets for list literals -/)]
+  - Square brackets for list literals -/)
+  (proof := /-- Constructed as a literal list of \texttt{Option (List $\alpha$)} values, mixing \texttt{some} and \texttt{none} with nested list and coercion expressions. -/)]
 def mixed_deep_nesting {α : Type} [Inhabited α] : List (Option (List α)) :=
   -- Comment inside the definition
   -- Each line below has different nesting patterns
@@ -145,7 +150,8 @@ These test realistic code patterns with mixed brackets and comments.
   - Implicit type parameter `{α : Type}`
   - Explicit parameters in parentheses
   - List operations with square brackets
-  - Conditional expressions -/)]
+  - Conditional expressions -/)
+  (proof := /-- Case-splits on whether the input list is empty: returns \texttt{none} for the empty list, and \texttt{some} of the filtered sublist otherwise. -/)]
 def all_brackets {α : Type} (xs : List α) (p : α → Bool) : Option (List α) :=
   -- First check if the list is empty
   if xs.isEmpty then
@@ -162,7 +168,8 @@ def all_brackets {α : Type} (xs : List α) (p : α → Bool) : Option (List α)
 @[blueprint "bracket:realistic"
   (title := "Realistic Function")
   (message := "A more realistic function with comments")
-  (statement := /-- x^2 +2x + 3-/)]
+  (statement := /-- x^2 +2x + 3-/)
+  (proof := /-- Pattern-matches on the list: the empty list returns $0$, a singleton applies $f$, and the cons case recursively folds via $g$. -/)]
 def realistic_func (f : Nat → Nat) (g : Nat → Nat → Nat) (xs : List Nat) : Nat :=
   -- Handle empty list case
   match xs with
@@ -188,7 +195,8 @@ This pushes the bracket nesting to 10 levels to thoroughly test wrap-around.
   - Levels 1-6: Colors 1-6
   - Levels 7-10: Colors 1-4 (wrap around)
 
-  This ensures the modulo arithmetic in `wrapBracketsWithDepth` works correctly. -/)]
+  This ensures the modulo arithmetic in `wrapBracketsWithDepth` works correctly. -/)
+  (proof := /-- Defined as a lambda taking two naturals and returning a single deeply nested arithmetic expression combining addition, multiplication, subtraction, division, and modulo. -/)]
 def extreme_nesting : Nat → Nat → Nat := fun a b =>
   -- 10 levels deep with mixed bracket types
   -- Count: { ( ( ( [ ( ( ( ( ( ... ) ) ) ) ) ] ) ) ) }
@@ -216,7 +224,8 @@ They test the tactic state toggle feature in the Side-by-Side display.
 
   This proof uses structured tactics with `induction` and `omega`:
   - Base case: `n + 0 = 0 + n` solved by omega
-  - Inductive case: Uses omega with the induction hypothesis -/)]
+  - Inductive case: Uses omega with the induction hypothesis -/)
+  (proof := /-- By induction on $m$. Both the base case ($m = 0$) and the inductive step ($m = k + 1$) are resolved by the \texttt{omega} tactic using linear arithmetic. -/)]
 theorem nat_add_comm_tactic (n m : Nat) : n + m = m + n := by
   induction m with
   | zero => omega
@@ -230,7 +239,8 @@ theorem nat_add_comm_tactic (n m : Nat) : n + m = m + n := by
   This proof demonstrates:
   - Induction on the list structure
   - Using `simp` to simplify list operations
-  - Using `omega` for arithmetic -/)]
+  - Using `omega` for arithmetic -/)
+  (proof := /-- By structural induction on the first list. The nil case simplifies directly. The cons case unfolds the append and length definitions with \texttt{simp}, then closes the arithmetic goal with \texttt{omega}. -/)]
 theorem list_length_append_tactic {α : Type} (xs ys : List α) :
     (xs ++ ys).length = xs.length + ys.length := by
   induction xs with

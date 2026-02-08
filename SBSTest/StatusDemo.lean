@@ -125,6 +125,7 @@ This is detected during elaboration and cannot be overridden by manual flags.
   - Mark as priorityItem if it's blocking progress
 
   \uses{another_ready} -/)
+  (proof := /-- Proof not yet completed. The intended approach is to introduce $n$ and apply reflexivity of addition with zero. -/)
   (uses := ["another_ready"])]
 theorem has_sorry : ∀ n : Nat, n + 0 = n := by
   -- We're using sorry here to demonstrate the sorry status
@@ -143,6 +144,7 @@ theorem has_sorry : ∀ n : Nat, n + 0 = n := by
   cannot be fully proven until the sorry is resolved.
 
   \uses{has_sorry} -/)
+  (proof := /-- Proof not yet completed. The intended approach is to use the commutativity of natural number addition. -/)
   (uses := ["has_sorry"])]
 theorem also_sorry : ∀ n : Nat, 0 + n = n := by
   -- Another sorry for testing

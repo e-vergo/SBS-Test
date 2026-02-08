@@ -28,6 +28,8 @@ authoring mode supported since the first release.
   This is the classic left identity of addition on $\mathbb{N}$.
 
   \uses{} -/)
+  (proof := /-- Direct application of the \texttt{omega} tactic, which
+  decides linear arithmetic over the naturals. -/)
   (latexEnv := "theorem")]
 theorem attr_demo : ∀ n : Nat, 0 + n = n := by
   intro n
@@ -44,7 +46,10 @@ associates the TeX block with the next blueprint-annotated declaration.
 For all natural numbers $n$ and $m$, we have $n + m = m + n$.
 %%-/
 @[blueprint "delim_block_demo"
-  (title := "Block Delimiter Demo")]
+  (title := "Block Delimiter Demo")
+  (proof := /-- The commutativity of addition on $\mathbb{N}$ is
+  resolved by the \texttt{omega} linear arithmetic decision procedure
+  after introducing both universally quantified variables. -/)]
 theorem delim_block_demo : ∀ n m : Nat, n + m = m + n := by
   intro n m
   omega
@@ -59,7 +64,8 @@ the full TeX block, associated with the next declaration.
 --%%A simple constant equal to $42$, demonstrating single-line
 --%%delimiter syntax for short TeX blocks.
 @[blueprint "delim_line_demo"
-  (title := "Line Delimiter Demo")]
+  (title := "Line Delimiter Demo")
+  (proof := /-- Defined as the literal value $42$. -/)]
 def delim_line_demo : Nat := 42
 
 /-! ## Combined: Attribute + Delimiter Styles in One Module
@@ -78,6 +84,9 @@ existing attribute-based statements.
 
   This is the rule of modus ponens, one of the fundamental
   inference rules of propositional logic. -/)
+  (proof := /-- By direct function application: given the
+  implication $P \to Q$ and a proof of $P$, apply the former
+  to the latter to obtain $Q$. -/)
   (latexEnv := "theorem")]
 theorem attr_logic : ∀ (P Q : Prop), (P → Q) → P → Q := by
   intro P Q hPQ hP
@@ -90,6 +99,9 @@ That is, $P \to \lnot\lnot P$.
 %%-/
 @[blueprint "delim_block_dne"
   (title := "Double Negation Intro")
+  (proof := /-- Assume $P$ and $\lnot P$. Since $\lnot P$ is
+  defined as $P \to \bot$, applying $\lnot P$ to the proof of $P$
+  yields a contradiction. -/)
   (uses := ["attr_logic"])]
 theorem delim_block_dne : ∀ (P : Prop), P → ¬¬P := by
   intro P hP hNotP
@@ -99,7 +111,9 @@ theorem delim_block_dne : ∀ (P : Prop), P → ¬¬P := by
 --%%The polymorphic identity function: for any type $\alpha$,
 --%%maps each element to itself.
 @[blueprint "delim_line_id"
-  (title := "Identity Function")]
+  (title := "Identity Function")
+  (proof := /-- Returns its argument unchanged; the definition
+  is the identity map $a \mapsto a$. -/)]
 def delim_line_id (α : Type) (a : α) : α := a
 
 end SBSTest.DelimiterDemo

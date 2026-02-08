@@ -18,7 +18,8 @@ which imports all blueprinted declarations from a module at once.
 
 @[blueprint "mod:first"
   (title := "Module Test First")
-  (statement := /-- First declaration in the module reference test. -/)]
+  (statement := /-- First declaration in the module reference test. -/)
+  (proof := /-- Defined as the constant value $42$. -/)]
 def firstDef : Nat := 42
 
 @[blueprint "mod:second"

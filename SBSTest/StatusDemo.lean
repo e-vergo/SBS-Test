@@ -47,6 +47,7 @@ Each node has a specific status to test the 6-color model.
   - Depends on unformalized concepts
 
   \uses{base_axiom} -/)
+  (proof := /-- Immediate from the trivial tactic. -/)
   (below := /-- The foundation lemma is a prerequisite for all subsequent results
   in the formalization chain. See the ready-to-prove nodes next. -/)
   (uses := ["base_axiom"])]
@@ -75,6 +76,7 @@ where you have a clear proof strategy but haven't written the Lean code.
   2. Use basic logic
 
   \uses{foundation} -/)
+  (proof := /-- Direct application of the \texttt{trivial} lemma. -/)
   (uses := ["foundation"])]
 theorem ready_to_prove : True := by
   -- This proof exists but the ready flag is for demonstration
@@ -91,6 +93,7 @@ theorem ready_to_prove : True := by
   in the dependency graph and dashboard.
 
   \uses{ready_to_prove} -/)
+  (proof := /-- The result is trivially true. -/)
   (below := /-- Having verified the above, we proceed to the sorry-status
   demonstrations which show how incomplete proofs propagate through
   the dependency graph. See the next section for details. -/)
@@ -162,7 +165,8 @@ However, if they depend on nodes with sorry, they won't be "fullyProven".
 
   This is a simple theorem that we can prove completely.
   Since it has no dependencies, it will be marked as "fullyProven"
-  automatically by the graph analysis. -/)]
+  automatically by the graph analysis. -/)
+  (proof := /-- Introduce the proposition $P$ and its proof $h$, then return $h$ directly. This is the identity function on proofs. -/)]
 theorem proven_leaf : ∀ (P : Prop), P → P := by
   -- This is a complete proof of the identity function on propositions
   -- Step 1: Introduce the proposition P
@@ -184,6 +188,7 @@ theorem proven_leaf : ∀ (P : Prop), P → P := by
   Because of the sorry dependency, this cannot be "fullyProven".
 
   \uses{also_sorry, proven_leaf} -/)
+  (proof := /-- Split the conjunction into two subgoals and discharge each by triviality. -/)
   (uses := ["also_sorry", "proven_leaf"])]
 theorem proven_mid : True ∧ True := by
   -- A slightly more interesting proof using constructor
@@ -201,6 +206,7 @@ theorem proven_mid : True ∧ True := by
   Demonstrates longer dependency chains and how status propagates.
 
   \uses{proven_mid} -/)
+  (proof := /-- Prove the left disjunct of $\top \lor \bot$ directly, since $\top$ holds trivially. -/)
   (uses := ["proven_mid"])]
 theorem proven_chain : True ∨ False := by
   -- We prove True ∨ False by proving the left disjunct
@@ -231,6 +237,7 @@ This creates a "proven chain" from leaves upward.
   Therefore, this entire dependency tree is complete and verified.
 
   \uses{proven_leaf} -/)
+  (proof := /-- Apply the proven leaf theorem directly, which already establishes $\forall P,\; P \to P$. -/)
   (uses := ["proven_leaf"])]
 theorem fully_chain_1 : ∀ (P : Prop), P → P := by
   -- We can use proven_leaf directly since it proves the same thing!
@@ -246,6 +253,7 @@ theorem fully_chain_1 : ∀ (P : Prop), P → P := by
   All nodes in this chain are completely verified.
 
   \uses{fully_chain_1} -/)
+  (proof := /-- Introduce $P$, $Q$, and a proof of $P$. Discard the hypothesis of $Q$ and return the proof of $P$. This is the weakening principle. -/)
   (uses := ["fully_chain_1"])]
 theorem fully_chain_2 : ∀ (P Q : Prop), P → (Q → P) := by
   -- A more interesting proof showing weakening
@@ -265,6 +273,7 @@ theorem fully_chain_2 : ∀ (P Q : Prop), P → (Q → P) := by
   All ancestors are proven, so this is fullyProven.
 
   \uses{fully_chain_2} -/)
+  (proof := /-- Given a proof $h$ of $P$, apply the left injection into $P \lor P$. -/)
   (uses := ["fully_chain_2"])]
 theorem fully_chain_3 : ∀ (P : Prop), P → P ∨ P := by
   -- Proof that P implies P ∨ P
@@ -293,6 +302,7 @@ is ready for submission to mathlib (or has been submitted).
   - No unnecessary dependencies
 
   \uses{fully_chain_1} -/)
+  (proof := /-- Chain the two hypotheses $P \to Q$ and $Q \to R$ by function composition to obtain $P \to R$. -/)
   (uses := ["fully_chain_1"])]
 theorem mathlib_theorem : ∀ (P Q R : Prop), (P → Q) → (Q → R) → (P → R) := by
   -- Proof of transitivity of implication
@@ -335,6 +345,7 @@ The graph validator should report:
   3. Finding a common base lemma
 
   \uses{cycle_b} -/)
+  (proof := /-- Split the biconditional into both directions and discharge each by the identity. -/)
   (uses := ["cycle_b"])]
 theorem cycle_a : True ↔ True := by
   -- Proof of True ↔ True (trivial but demonstrates the cycle issue)
@@ -351,6 +362,7 @@ theorem cycle_a : True ↔ True := by
   The other half of the cycle_a ↔ cycle_b dependency cycle.
 
   \uses{cycle_a} -/)
+  (proof := /-- Both directions of the biconditional follow immediately by assumption. -/)
   (uses := ["cycle_a"])]
 theorem cycle_b : True ↔ True := by
   -- Same proof structure as cycle_a

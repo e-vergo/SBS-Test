@@ -162,22 +162,7 @@ def all_brackets {α : Type} (xs : List α) (p : α → Bool) : Option (List α)
 @[blueprint "bracket:realistic"
   (title := "Realistic Function")
   (message := "A more realistic function with comments")
-  (statement := /-- A realistic helper function with full documentation.
-
-  ## Parameters
-  - `f`: A transformation function
-  - `g`: A combining function
-  - `xs`: Input list
-
-  ## Returns
-  The result of applying `f` to each element, then combining with `g`.
-
-  ## Example
-  ```
-  realistic_func (· + 1) (· * ·) [1, 2, 3]
-  -- Returns: (2 * (3 * (4)))  -- note the nesting!
-  ```
-  -/)]
+  (statement := /-- x^2 +2x + 3-/)]
 def realistic_func (f : Nat → Nat) (g : Nat → Nat → Nat) (xs : List Nat) : Nat :=
   -- Handle empty list case
   match xs with

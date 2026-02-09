@@ -181,36 +181,32 @@ Multi-step tactic proofs demonstrating tactic state toggles.
 
 \inputleannode{bracket:list_length_append_tactic}
 
-\chapter{Delimiter Syntax Demo}
+\chapter{Statement Attribute Demo}
 
-This chapter demonstrates the two authoring modes for embedding TeX statements
-in Lean files. The traditional mode uses the \texttt{(statement := /-- ... -/)}
-attribute option, while the new delimiter mode uses \texttt{/-\%\%...\%\%-/} block
-comments or \texttt{--\%\%} line comments.
+This chapter demonstrates attribute-based LaTeX authoring using
+\texttt{@[blueprint]} fields: \texttt{statement}, \texttt{above},
+\texttt{below}, and \texttt{proof}.
 
-\section{Attribute-Based Statements}
+\section{Basic Statements}
 
-The traditional approach embeds the TeX statement directly in the
-\texttt{@[blueprint]} attribute.
+The \texttt{(statement := /-- ... -/)} syntax embeds TeX directly
+in the attribute. The \texttt{above} and \texttt{below} fields add
+contextual paragraphs around the formal statement.
 
 \inputleannode{attr_demo}
 
-\inputleannode{attr_logic}
-
-\section{Block Delimiter Statements}
-
-Block delimiters use \texttt{/-\%\%...\%\%-/} comments to associate
-TeX blocks with the next \texttt{@[blueprint]} declaration.
-
 \inputleannode{delim_block_demo}
 
-\inputleannode{delim_block_dne}
-
-\section{Line Delimiter Statements}
-
-Line delimiters use consecutive \texttt{--\%\%} comments for short TeX blocks.
-
 \inputleannode{delim_line_demo}
+
+\section{Logic Examples}
+
+These declarations form a dependency chain demonstrating how
+\texttt{uses} connects nodes in the graph.
+
+\inputleannode{attr_logic}
+
+\inputleannode{delim_block_dne}
 
 \inputleannode{delim_line_id}
 

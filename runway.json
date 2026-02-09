@@ -5,6 +5,5 @@
   "baseUrl": "/SBS-Test/",
   "docgen4Url": null,
   "runwayDir": "runway",
-  "assetsDir": "../dress-blueprint-action/assets",
-  "statementSource": "both"
+  "assetsDir": "../dress-blueprint-action/assets"
 }

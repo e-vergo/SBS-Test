@@ -75,7 +75,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "4f8cbdfb427b7b27be762019d7328947b43e3080",
+   "rev": "30931d756efb4c3ee9b736d2c57a27a363f1ebef",
    "name": "LeanArchitect",
    "manifestFile": "lake-manifest.json",
    "inputRev": "main",

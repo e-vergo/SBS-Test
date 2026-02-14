@@ -9,28 +9,35 @@
 \newtheorem{lemma}{Lemma}[section]
 \newtheorem{corollary}{Corollary}[section]
 
-\title{SBS-Test: Status Badge Demo}
+\title{SBS-Test: Formalization Status Report}
 \author{Side-By-Side Blueprint Project}
 
-\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
 
 \begin{document}
 
 \chapter{Introduction}
 
-This paper demonstrates all 6 status badges with colored indicator dots.
-Each status corresponds to a formalization state for declarations over $\N$ and $\Z$.
-For a given declaration $d$, we track whether $d$ has been formalized, whether its
-proof is complete, and whether all of its dependencies are resolved.
+This paper demonstrates the Side-by-Side Blueprint paper generation system.
+We present a structured dependency graph with three branches that exercise
+all six formalization status types. The integration of formal proofs with
+traditional mathematical exposition enables direct verification of claimed results.
 
-\chapter{All Six Status Types}
+Our main contributions are:
+\begin{enumerate}
+\item A fully verified chain of propositional logic results (Branch C)
+\item Demonstration of sorry propagation through arithmetic results (Branch A)
+\item Integration of the Lean \texttt{axiom} keyword in set-theoretic results (Branch B)
+\item A mathlib-ready theorem on the clean dependency chain
+\end{enumerate}
+
+\chapter{Foundations}
 
 \section{Not Ready (Sandy Brown)}
 
 A node is \emph{not ready} when it has not yet been prepared for formalization.
-For example, a foundational lemma about elements $n \in \N$ may require
-prerequisite definitions before formalization can begin.
+The foundation lemma is manually marked notReady, connecting the informal
+base axiom to the formal development.
 
 \paperstatement{foundation}
 
@@ -40,47 +47,77 @@ The full declaration with proof:
 
 \section{Ready (Light Sea Green)}
 
-A node is \emph{ready} when the proof strategy is clear and formalization can proceed.
-Consider a proposition $P(n)$ for all $n \in \N$: once the dependencies are in place
-and the approach is understood, the node transitions to ready status.
+A node is \emph{ready} when the proof strategy is clear and formalization
+can proceed. The natural number identity is marked ready, awaiting upstream work.
 
-\paperstatement{ready_to_prove}
+\paperstatement{nat_identity}
 
-The full declaration with proof:
-
-\paperfull{ready_to_prove}
+\chapter{Branch A: Arithmetic}
 
 \section{Sorry (Dark Red)}
 
-When a proof contains \texttt{sorry}, the node receives the sorry status automatically.
-This indicates that the formalization is incomplete---for instance, a lemma
-$\forall x \in \Z,\; f(x) = f(-x)$ might have a partial proof with gaps remaining.
+When a proof contains \texttt{sorry}, the node receives sorry status automatically.
+This indicates that the formalization is incomplete.
 
-\paperfull{has_sorry}
+\paperfull{add_zero}
 
-\section{Proven (Light Green)}
+The sorry propagates: even though add\_comm has a different statement,
+it also contains sorry and blocks downstream verification.
 
-A node is \emph{proven} when its proof is complete but some of its dependencies
-are not yet fully resolved. For a chain of lemmas $L_1 \to L_2 \to \cdots \to L_k$
-where $k \geq 2$, a node $L_i$ may be proven while $L_{i-1}$ still has sorry.
+\paperfull{add_comm}
 
-\paperfull{proven_mid}
+\section{Proven with Sorry Ancestors}
 
-\section{Fully Proven (Forest Green)}
+Add\_assoc has a complete proof but cannot be fullyProven because
+its ancestry includes sorry nodes.
 
-A node is \emph{fully proven} when both its own proof and all transitive
-dependencies are complete. Given a dependency chain where each $L_i$ satisfies
-$L_i : \N \to \text{Prop}$, the terminal node achieves fully proven status only
-when every ancestor in the chain is also proven.
+\paperfull{add_assoc}
 
-\paperfull{fully_chain_1}
+\chapter{Branch C: The Fully Proven Chain}
+
+\section{Proven Leaf}
+
+Our chain begins with a proven leaf node that has no dependencies.
+Since all ancestors (vacuously) are proven, this node is auto-computed
+as fullyProven.
+
+\paperfull{proven_leaf}
+
+\section{Transitivity of Implication}
+
+\paperstatement{imp_trans}
+
+\section{Weakening Principle}
+
+\paperfull{weakening}
+
+\section{Diamond Pattern}
+
+The contrapositive and disjunction introduction demonstrate a diamond pattern
+in the dependency graph.
+
+\paperstatement{contrapositive}
+
+\paperfull{disjunction_intro}
+
+\chapter{Main Results}
+
+\section{Core Theorem}
+
+The core theorem merges Branches A and B in a diamond pattern,
+with both add\_assoc and subset\_refl tracing back to foundation.
+
+\paperfull{core_theorem}
+
+\section{Main Result}
+
+\paperstatement{main_result}
 
 \section{Mathlib Ready (Light Blue)}
 
 Nodes marked \emph{mathlib ready} are candidates for upstreaming to Mathlib.
-These represent results of general interest, such as a theorem about
-$\Z$-module homomorphisms $\varphi : \Z^n \to \Z^m$ where $n, m \in \N$.
+This theorem depends only on the fully proven chain (Branch C).
 
-\paperfull{mathlib_theorem}
+\paperfull{mathlib_ready}
 
 \end{document}

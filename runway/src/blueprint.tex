@@ -12,7 +12,7 @@
 \newtheorem{lemma}{Lemma}[section]
 \newtheorem{corollary}{Corollary}[section]
 
-\title{SBS-Test: Status Demo}
+\title{SBS-Test Blueprint}
 \author{Side-By-Side Blueprint Project}
 
 \newcommand{\N}{\mathbb{N}}
@@ -22,220 +22,151 @@
 
 \chapter{Introduction}
 
-This minimal test project demonstrates all features of the Side-by-Side Blueprint:
-\begin{itemize}
-\item All 6 node status types in the dependency graph
-\item Disconnected component detection (the cycle is isolated)
-\item Cycle detection (cycle\_a and cycle\_b form a mutual dependency)
-\item Dashboard features (key theorems, messages, blocked, issues, debt, misc)
-\end{itemize}
+This minimal test project demonstrates the Side-by-Side Blueprint system with
+a structured dependency graph containing 22 nodes across three branches.
+The project exercises all 6 status colors, diamond merge patterns,
+cross-branch dependencies, and the Lean \texttt{axiom} keyword.
 
-\chapter{Main Graph: Status Types}
+\chapter{Foundations}
 
-This chapter demonstrates the 6 node status types with a tree-structured dependency graph
-containing 13 connected nodes.
+This chapter establishes the base axiom and the foundation lemma
+that all subsequent results depend on.
 
 \section{Base Axiom}
 
 A base axiom with no Lean code (notReady status by default).
+This tests the TeX-only node feature.
 
 \begin{axiom}[base\_axiom]
 \label{base_axiom}
-A base axiom with no Lean code (notReady status).
+Every formalization project begins with informal axioms that
+are not yet expressed in Lean. This base axiom represents
+such an unformalized starting point.
 \end{axiom}
 
 \section{Foundation}
 
-Foundation lemma, manually marked notReady.
+The foundation lemma connects the base axiom to the rest
+of the dependency graph. It is manually marked as notReady.
 
 \inputleannode{foundation}
 
-\section{Ready Status}
+\chapter{Branch A: Arithmetic}
 
-Two theorems marked as ready to formalize.
+This branch demonstrates sorry propagation through a dependency chain.
+Even when downstream nodes have complete proofs, the sorry in an
+ancestor prevents fullyProven status.
 
-\inputleannode{ready_to_prove}
+\section{Natural Number Identity}
 
-\inputleannode{another_ready}
+\inputleannode{nat_identity}
 
-\section{Sorry Status}
+\section{Addition with Zero}
 
-Two theorems with incomplete proofs (sorry).
+\inputleannode{add_zero}
 
-\inputleannode{has_sorry}
+\section{Commutativity of Addition}
 
-\inputleannode{also_sorry}
+\inputleannode{add_comm}
 
-\section{Proven Status}
+\section{Associativity of Addition}
 
-Three theorems with complete proofs.
+\inputleannode{add_assoc}
+
+\chapter{Branch B: Set Theory}
+
+This branch tests the Lean \texttt{axiom} keyword and demonstrates
+how axioms integrate into the dependency graph.
+
+\section{Set Theory Basics}
+
+\inputleannode{set_basics}
+
+\section{Choice Axiom}
+
+This section uses the Lean \texttt{axiom} keyword, which Dress
+auto-detects via \texttt{ConstantInfo.axiomInfo}.
+
+\inputleannode{choice_axiom}
+
+\section{Element Self-Membership}
+
+\inputleannode{elem_self}
+
+\section{Subset Reflexivity}
+
+\inputleannode{subset_refl}
+
+\chapter{Branch C: Logic}
+
+This branch has no sorry and no manual status overrides in its ancestry.
+All nodes auto-compute to fullyProven via the graph analysis.
+
+\section{Proven Leaf}
+
+The starting point of the fully proven chain.
 
 \inputleannode{proven_leaf}
 
-\inputleannode{proven_mid}
+\section{Transitivity of Implication}
 
-\inputleannode{proven_chain}
+\inputleannode{imp_trans}
 
-\section{Fully Proven Chain}
+\section{Weakening Principle}
 
-Three theorems forming a fully proven dependency chain.
+\inputleannode{weakening}
 
-\inputleannode{fully_chain_1}
+\section{Contrapositive}
 
-\inputleannode{fully_chain_2}
+\inputleannode{contrapositive}
 
-\inputleannode{fully_chain_3}
+\section{Disjunction Introduction}
 
-\section{Mathlib Ready}
+This node demonstrates a diamond pattern: both contrapositive and
+weakening depend on imp\_trans, and this node depends on both.
 
-A theorem ready for mathlib.
+\inputleannode{disjunction_intro}
 
-\inputleannode{mathlib_theorem}
+\chapter{Merging and Main Results}
 
-\chapter{Validation Test Cases}
+These results merge the three branches, creating diamond patterns
+and cross-branch dependencies.
 
-These nodes test the graph validation features.
+\section{Core Theorem}
 
-\section{Disconnected Cycle}
+Merges Branch A (add\_assoc) and Branch B (subset\_refl) in a diamond pattern.
 
-These two nodes form a cycle AND are disconnected from the main graph.
-This tests both cycle detection and disconnected component detection.
+\inputleannode{core_theorem}
 
-\inputleannode{cycle_a}
+\section{Synthesis}
 
-\inputleannode{cycle_b}
+Merges all three branches by depending on core\_theorem and weakening.
+
+\inputleannode{synthesis}
+
+\section{Advanced Composition}
+
+\inputleannode{advanced_composition}
+
+\section{Main Result}
+
+\inputleannode{main_result}
+
+\section{Mathlib-Ready Theorem}
+
+This theorem depends only on the fully proven chain (Branch C).
+
+\inputleannode{mathlib_ready}
 
 \chapter{Module Reference Test}
 
 This chapter tests the \texttt{\textbackslash inputleanmodule\{ModuleName\}} command,
-which imports all blueprinted declarations from a Lean module at once,
-as opposed to referencing them individually with \texttt{\textbackslash inputleannode\{label\}}.
+which imports all blueprinted declarations from a Lean module at once.
 
 \section{All Declarations from Module}
 
 The following declarations are imported via \texttt{\textbackslash inputleanmodule\{SBSTest.ModuleRefTest\}}:
 
 \inputleanmodule{SBSTest.ModuleRefTest}
-
-\chapter{Bracket Highlighting Demo}
-
-This chapter demonstrates the rainbow bracket highlighting feature.
-Each nesting level of brackets gets a different color (cycling through 6 colors),
-making it easier to match opening and closing brackets in complex expressions.
-
-\section{Nested Parentheses}
-
-A basic example with 3 levels of nested parentheses.
-
-\inputleannode{bracket:nested}
-
-\section{Mixed Bracket Types}
-
-Demonstrates parentheses and function application.
-
-\inputleannode{bracket:function}
-
-\section{Type Brackets}
-
-Shows implicit type parameters using curly braces.
-
-\inputleannode{bracket:types}
-
-\section{Deep Nesting (8 Levels)}
-
-Tests that bracket colors wrap around correctly after 6 colors.
-Level 7 should use color 1 again, level 8 should use color 2.
-
-\inputleannode{bracket:deep}
-
-\section{Mixed Deep Nesting}
-
-Complex expression mixing all bracket types at various depths.
-
-\inputleannode{bracket:mixed_deep}
-
-\section{All Bracket Types}
-
-Combines parentheses, square brackets, and curly braces in realistic code.
-
-\inputleannode{bracket:complex}
-
-\section{Realistic Function}
-
-A more realistic function demonstrating comments and brackets together.
-
-\inputleannode{bracket:realistic}
-
-\section{Extreme Nesting (10 Levels)}
-
-Stress test with 10 levels of bracket nesting to verify wrap-around works
-for two complete color cycles plus extra.
-
-\inputleannode{bracket:extreme}
-
-\section{Tactic-Mode Proofs}
-
-Multi-step tactic proofs demonstrating tactic state toggles.
-
-\inputleannode{bracket:nat_add_comm_tactic}
-
-\inputleannode{bracket:list_length_append_tactic}
-
-\chapter{Statement Attribute Demo}
-
-This chapter demonstrates attribute-based LaTeX authoring using
-\texttt{@[blueprint]} fields: \texttt{statement}, \texttt{above},
-\texttt{below}, and \texttt{proof}.
-
-\section{Basic Statements}
-
-The \texttt{(statement := /-- ... -/)} syntax embeds TeX directly
-in the attribute. The \texttt{above} and \texttt{below} fields add
-contextual paragraphs around the formal statement.
-
-\inputleannode{attr_demo}
-
-\inputleannode{delim_block_demo}
-
-\inputleannode{delim_line_demo}
-
-\section{Logic Examples}
-
-These declarations form a dependency chain demonstrating how
-\texttt{uses} connects nodes in the graph.
-
-\inputleannode{attr_logic}
-
-\inputleannode{delim_block_dne}
-
-\inputleannode{delim_line_id}
-
-\chapter{Security Test}
-
-This chapter tests XSS prevention by using malicious-looking input values
-in the blueprint attribute options. All script tags and HTML should be
-escaped in the output.
-
-\section{XSS Attack Vectors}
-
-These theorems test various XSS attack vectors in user-controlled fields.
-If the security hardening is working, you should see escaped HTML text
-(like \texttt{\&lt;script\&gt;}) instead of executed JavaScript.
-
-\inputleannode{xss_title}
-
-\inputleannode{xss_message}
-
-\inputleannode{xss_blocked}
-
-\inputleannode{xss_issue}
-
-\inputleannode{xss_debt}
-
-\inputleannode{xss_misc}
-
-\inputleannode{xss_label}
-
-\inputleannode{xss_quotes}
 
 \end{document}

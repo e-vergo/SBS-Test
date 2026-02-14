@@ -1,9 +1,9 @@
 /-
-Test Verso blueprint document for SBS-Test.
+Verso blueprint document for SBS-Test.
 Demonstrates the SBSBlueprint genre with hook directives.
 -/
 import SBSBlueprint
-import SBSTest.StatusDemo  -- For @[blueprint] declarations
+import SBSTest.StatusDemo
 
 open Verso.Genre.SBSBlueprint
 
@@ -15,13 +15,13 @@ This blueprint demonstrates the Side-by-Side Blueprint system. It shows how form
 can be displayed alongside LaTeX theorem statements, providing a unified view of both the
 informal mathematical content and its formal verification.
 
-The SBS-Test project contains 15 nodes demonstrating all 6 status colors and validation
-features like cycle detection and disconnected component detection.
+The SBS-Test project contains 22 nodes across three branches, demonstrating all 6 status
+colors, diamond merge patterns, and cross-branch dependencies.
 
 # The Fully Proven Chain
 
-The following theorems form a fully verified chain. Each node in this chain has a complete
-proof, and all dependencies are also fully proven. This demonstrates the `fullyProven`
+The following theorems form a fully verified chain. Each node has a complete proof,
+and all dependencies are also fully proven. This demonstrates the `fullyProven`
 status, which is auto-computed by analyzing the dependency graph.
 
 ## Starting Point: The Leaf
@@ -31,71 +31,77 @@ Our chain begins with a proven leaf node that has no dependencies:
 :::leanNode "proven_leaf"
 :::
 
-## Building the Chain
+## Transitivity and Weakening
 
 From this leaf, we build a chain of fully proven theorems:
 
-:::leanNode "fully_chain_1"
+:::leanNode "imp_trans"
 :::
 
-This continues through the chain:
+The weakening principle follows:
 
-:::leanNode "fully_chain_2"
+:::leanNode "weakening"
 :::
 
-And reaches its conclusion:
+## Diamond Pattern
 
-:::leanNode "fully_chain_3"
+The contrapositive and disjunction introduction create a diamond pattern
+in the dependency graph:
+
+:::leanNode "contrapositive"
+:::
+
+:::leanNode "disjunction_intro"
 :::
 
 # Theorems with Incomplete Proofs
 
-Not all proofs are complete. The following theorem contains a `sorry`, indicating
-that work remains to be done. The system automatically detects this and marks the
-node with the "sorry" status.
+Not all proofs are complete. The following theorems contain `sorry`, indicating
+that work remains to be done. The system automatically detects this and marks
+the nodes with the sorry status.
 
-:::leanNode "has_sorry"
+:::leanNode "add_zero"
 :::
 
-Nodes with sorry block downstream verification. Even if a theorem has a complete
-proof structure, if it depends on a sorry node, it cannot be marked as fully proven.
-
-:::leanNode "also_sorry"
+:::leanNode "add_comm"
 :::
 
 # Manual Status Flags
 
-Some theorems have manual status flags that override the auto-detection.
+Some theorems have manual status flags that override auto-detection.
 
 ## Ready for Formalization
 
-This theorem is marked as "ready" -- the proof strategy is clear, we just need
-to write the Lean code:
+These theorems are marked as ready -- the proof strategy is clear:
 
-:::leanNode "ready_to_prove"
+:::leanNode "nat_identity"
+:::
+
+:::leanNode "set_basics"
 :::
 
 ## Ready for Mathlib
 
 This theorem is polished and ready for submission to mathlib:
 
-:::leanNode "mathlib_theorem"
+:::leanNode "mathlib_ready"
 :::
 
-# Dependency Cycles
+# Cross-Branch Merging
 
-The following nodes form a cycle, which is usually a sign of a logical error
-in the blueprint structure:
+The core theorem merges the arithmetic and set theory branches:
 
-:::leanNode "cycle_a"
+:::leanNode "core_theorem"
 :::
 
-:::leanNode "cycle_b"
+The synthesis merges all three branches:
+
+:::leanNode "synthesis"
 :::
 
 # Full Module Reference
 
-The following section includes all nodes from the StatusDemo module:
+The following section includes all nodes from the ModuleRefTest module:
 
-:::leanModule "SBSTest.StatusDemo"
+:::leanModule "SBSTest.ModuleRefTest"
 :::

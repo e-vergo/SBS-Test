@@ -1,9 +1,9 @@
 /-
-Test Verso paper document for SBS-Test.
+Verso paper document for SBS-Test.
 Demonstrates paper-style output with :::paperStatement, :::paperFull, :::paperProof hooks.
 -/
 import SBSBlueprint
-import SBSTest.StatusDemo  -- For @[blueprint] declarations
+import SBSTest.StatusDemo
 
 open Verso.Genre.SBSBlueprint
 
@@ -12,9 +12,9 @@ open Verso.Genre.SBSBlueprint
 # Abstract
 
 This paper demonstrates the Side-by-Side Blueprint paper generation system. We present
-a collection of elementary propositions in propositional logic, establishing their formal
-correctness via the Lean theorem prover. The integration of formal proofs with traditional
-mathematical exposition enables direct verification of claimed results.
+a structured dependency graph with three branches of mathematical results, establishing
+their formal correctness via the Lean theorem prover. The integration of formal proofs
+with traditional mathematical exposition enables direct verification of claimed results.
 
 # Introduction
 
@@ -24,54 +24,58 @@ mathematical proofs. This paper demonstrates the Side-by-Side Blueprint system, 
 presents formal Lean proofs alongside their informal LaTeX statements.
 
 Our main contributions are:
-1. A proven identity function on propositions
-2. A fully verified chain of implications
-3. Transitivity of implication (mathlib-ready)
+1. A fully verified chain of propositional logic theorems
+2. Demonstration of sorry propagation through arithmetic results
+3. A mathlib-ready theorem on the clean dependency chain
 
 # Main Results
 
 ## The Identity Principle
 
 We begin with the fundamental result that any proposition implies itself. This is the
-cornerstone of our development.
+cornerstone of our fully verified chain.
 
 :::paperStatement "proven_leaf"
 :::
 
 The proof proceeds by direct implication introduction: given any proposition `P` and
-a proof `h : P`, we simply return `h` as our proof of `P`. This result requires no
-dependencies and forms the base of our fully proven chain.
+a proof `h : P`, we simply return `h` as our proof of `P`.
 
 ## The Fully Proven Chain
 
-Building on the identity principle, we establish a chain of fully verified theorems.
-Each step in this chain has been mechanically verified, and the entire dependency
-tree is complete.
+Building on the identity principle, we establish transitivity of implication:
 
-:::paperFull "fully_chain_1"
+:::paperFull "imp_trans"
 :::
 
-The first theorem in our chain directly uses the proven leaf. Since its only dependency
-is fully verified, this theorem automatically receives the "fully proven" status.
+The weakening principle follows, demonstrating that from `P`, we can derive
+`Q -> P` for any `Q`:
 
-Continuing the chain, we establish a weakening principle:
-
-:::paperStatement "fully_chain_2"
+:::paperStatement "weakening"
 :::
 
-This demonstrates that from `P`, we can derive `Q → P` for any `Q`. The proof ignores
-the hypothesis `Q` and returns the original proof of `P`.
+## Diamond Pattern
 
-## Transitivity of Implication
+The contrapositive and disjunction introduction create a diamond in the
+dependency graph, both depending on imp_trans:
 
-Our flagship result establishes the transitivity of logical implication. This theorem
-meets mathlib quality standards and is ready for submission.
-
-:::paperFull "mathlib_theorem"
+:::paperFull "disjunction_intro"
 :::
 
-The proof composes the two given implications: given `hPQ : P → Q` and `hQR : Q → R`
-and a proof of `P`, we apply `hQR` to `hPQ hP` to obtain a proof of `R`.
+## Core Theorem
+
+The core theorem merges the arithmetic and set theory branches:
+
+:::paperFull "core_theorem"
+:::
+
+## Mathlib-Ready Theorem
+
+Our flagship result establishes a theorem ready for mathlib submission,
+depending only on the fully verified chain:
+
+:::paperFull "mathlib_ready"
+:::
 
 # Incomplete Results
 
@@ -82,12 +86,12 @@ theorems that still contain gaps.
 
 The following theorem has an incomplete proof, indicated by the presence of `sorry`:
 
-:::paperProof "has_sorry"
+:::paperProof "add_zero"
 :::
 
-The sorry indicates that the proof of `∀ n : Nat, n + 0 = n` is not yet complete. While
-this is a trivial fact in arithmetic (it follows by reflexivity), we intentionally leave
-it incomplete to demonstrate the system's ability to detect and report sorry status.
+The sorry indicates that the proof of the left identity of addition is not yet
+complete. We intentionally leave it incomplete to demonstrate the system's
+ability to detect and report sorry status.
 
 # Discussion
 
@@ -99,6 +103,4 @@ mathematics. Key features demonstrated in this paper include:
 - **Full side-by-side**: The `:::paperFull` hook shows both statement and Lean code
 - **Proof extraction**: The `:::paperProof` hook extracts just the Lean proof body
 - **Automatic status**: The system automatically detects sorry-containing proofs
-
-Future work includes expanding the chain to more complex mathematical results and
-integrating with the mathlib library.
+- **Diamond patterns**: Cross-branch dependencies create rich DAG structures

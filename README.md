@@ -33,7 +33,7 @@ Minimal test project for the [Side-by-Side Blueprint](https://github.com/e-vergo
 SBS-Test is the primary test project for the Side-by-Side Blueprint toolchain. It exists to make development fast and reliable by providing:
 
 1. **Fast iteration** - ~2 minute builds vs. 5-20 minutes for production projects
-2. **Complete feature coverage** - All 6 status colors, 8 metadata options, 3 manual flags
+2. **Complete feature coverage** - All 7 status colors, 8 metadata options, 2 manual flags
 3. **Validation testing** - Intentional graph errors (cycles, disconnected components)
 4. **Security testing** - XSS prevention across all user-controlled fields
 5. **Visual regression baseline** - Reference screenshots for automated compliance validation
@@ -72,9 +72,9 @@ SBS-Test specifically exercises the validation checks (connectivity, cycles) tha
 
 | Category | Coverage |
 |----------|----------|
-| Status colors | All 6: notReady, ready, sorry, proven, fullyProven, mathlibReady |
+| Status colors | All 7: notReady, wip, sorry, proven, fullyProven, axiom, mathlibReady |
 | Metadata options | All 8: title, keyDeclaration, message, priorityItem, blocked, potentialIssue, technicalDebt, misc |
-| Manual status flags | All 3: notReady, ready, mathlibReady |
+| Manual status flags | Both: wip, mathlibReady |
 | Graph validation | Disconnected component detection, cycle detection |
 | Rainbow brackets | Nesting depths 1-10, all bracket types, color wrap-around |
 | Module references | `\inputleanmodule{ModuleName}` expansion |
@@ -86,13 +86,13 @@ SBS-Test specifically exercises the validation checks (connectivity, cycles) tha
 
 ### StatusDemo.lean (14 nodes)
 
-Demonstrates all 6 status colors and graph validation:
+Demonstrates all 7 status colors and graph validation:
 
 | Label | Status | Source | Purpose |
 |-------|--------|--------|---------|
 | `foundation` | notReady | Manual flag | Tests `(notReady := true)` override |
-| `ready_to_prove` | ready | Manual flag | Tests `(ready := true)` |
-| `another_ready` | ready | Manual flag | Second ready node |
+| `ready_to_prove` | wip | Manual flag | Tests `(wip := true)` |
+| `another_ready` | wip | Manual flag | Second wip node |
 | `has_sorry` | sorry | Auto-detected | Contains `sorry` in proof |
 | `also_sorry` | sorry | Auto-detected | Second sorry node |
 | `proven_leaf` | fullyProven | Auto-computed | Complete proof, no dependencies |
@@ -187,7 +187,7 @@ SBS-Test/
 | File | Purpose |
 |------|---------|
 | `SBSTest.lean` | Library root - imports all modules for Lake build |
-| `SBSTest/StatusDemo.lean` | Primary test file: 14 nodes covering all 6 statuses, graph validation |
+| `SBSTest/StatusDemo.lean` | Primary test file: 14 nodes covering all 7 statuses, graph validation |
 | `SBSTest/BracketDemo.lean` | Rainbow bracket stress testing: depths 1-10, all bracket types |
 | `SBSTest/SecurityTest.lean` | XSS prevention: script tags, event handlers, javascript URLs |
 | `runway/src/blueprint.tex` | LaTeX blueprint structure with `\inputleannode{}` and `\inputleanmodule{}` |
@@ -360,7 +360,7 @@ dev/storage/
 When verifying changes to the toolchain:
 
 1. **Dashboard** (`index.html`)
-   - Stats panel shows correct counts for all 6 statuses
+   - Stats panel shows correct counts for all 7 statuses
    - Key Theorems panel lists nodes with `keyDeclaration := true`
    - Messages panel shows nodes with `message` field
    - Project Notes shows blocked/issues/debt/misc items
@@ -368,7 +368,7 @@ When verifying changes to the toolchain:
 2. **Dependency Graph** (`dep_graph.html`)
    - Main component shows 31 connected nodes
    - Disconnected cycle (cycle_a, cycle_b) is separate
-   - All 6 status colors appear correctly
+   - All 7 status colors appear correctly
    - Pan/zoom and modals function properly
    - Edge styles: solid (proof deps), dashed (statement deps)
 
@@ -453,7 +453,7 @@ SBS-Test integrates with every component in the toolchain:
 | Component | Integration |
 |-----------|-------------|
 | **SubVerso** | Syntax highlighting via `BLUEPRINT_DRESS=1` during elaboration |
-| **LeanArchitect** | `@[blueprint]` attribute with all 8 metadata + 3 status options |
+| **LeanArchitect** | `@[blueprint]` attribute with all 8 metadata + 2 manual status options |
 | **Dress** | Artifact generation, graph layout, validation checks |
 | **Runway** | Site generation, dashboard, paper/PDF output |
 | **Verso** | SBSBlueprint and VersoPaper genres via `GenerateBlueprint.lean` |
@@ -583,14 +583,15 @@ The build script automatically handles screenshot management—no manual capture
 
 | Status | Color | Hex | Source |
 |--------|-------|-----|--------|
-| notReady | Sandy Brown | #F4A460 | Default or `(notReady := true)` |
-| ready | Light Sea Green | #20B2AA | `(ready := true)` |
-| sorry | Dark Red | #8B0000 | Auto-detected from proof |
-| proven | Light Green | #90EE90 | Auto-detected (complete proof) |
-| fullyProven | Forest Green | #228B22 | Auto-computed (all ancestors proven) |
-| mathlibReady | Light Blue | #87CEEB | `(mathlibReady := true)` |
+| notReady | Vivid Orange | #E8820C | Default -- no Lean proof exists |
+| wip | Deep Teal | #0097A7 | `(wip := true)` |
+| sorry | Vivid Red | #C62828 | Auto-detected from proof |
+| proven | Medium Green | #66BB6A | Auto-detected (complete proof) |
+| fullyProven | Deep Forest Green | #1B5E20 | Auto-computed (all ancestors proven) |
+| axiom | Vivid Purple | #7E57C2 | Auto-detected (Lean `axiom` declaration) |
+| mathlibReady | Vivid Blue | #42A5F5 | `(mathlibReady := true)` |
 
-**Priority order** (highest to lowest): mathlibReady > ready > notReady (manual) > fullyProven > sorry > proven > notReady (default)
+**Priority order** (highest to lowest): mathlibReady > wip > notReady (manual) > fullyProven > axiom > sorry > proven > notReady (default)
 
 The `fullyProven` status is computed via O(V+E) graph traversal with memoization: a node is fullyProven if it is proven and all its ancestors are proven or fullyProven.
 
@@ -609,13 +610,12 @@ The `fullyProven` status is computed via O(V+E) graph traversal with memoization
 | `technicalDebt` | `(technicalDebt := "Needs refactoring")` |
 | `misc` | `(misc := "PR #12345 submitted")` |
 
-### Manual Status Flags (3)
+### Manual Status Flags (2)
 
 | Option | Effect |
 |--------|--------|
-| `(notReady := true)` | Sandy brown (#F4A460) |
-| `(ready := true)` | Light sea green (#20B2AA) |
-| `(mathlibReady := true)` | Light blue (#87CEEB) |
+| `(wip := true)` | Deep Teal (#0097A7) |
+| `(mathlibReady := true)` | Vivid Blue (#42A5F5) |
 
 ### Dependency Options
 

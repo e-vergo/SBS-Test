@@ -22,15 +22,17 @@ Merging:
   synthesis → main_result (keyDecl)
   weakening → mathlib_ready (mathlibReady)
 
-## Status Coverage:
-  notReady:     foundation
-  ready:        nat_identity, set_basics
-  sorry:        add_zero, add_comm
+## Status Coverage (7-status model):
+  notReady:     foundation (explicit flag)
+  wip:          nat_identity, set_basics (manual flag)
+  sorry:        add_zero, add_comm (derived from sorry in proof)
   proven:       elem_self, subset_refl, add_assoc, core_theorem,
                 synthesis, advanced_composition, main_result
+                (derived — has Lean proof, no sorry, but unclean ancestors)
   fullyProven:  proven_leaf, imp_trans, weakening, contrapositive,
-                disjunction_intro (auto-computed)
-  mathlibReady: mathlib_ready
+                disjunction_intro (auto-computed, all ancestors clean)
+  axiom:        choice_axiom (auto-detected from Lean `axiom` keyword)
+  mathlibReady: mathlib_ready (manual flag)
 -/
 import Dress
 import Mathlib.Tactic
@@ -63,10 +65,10 @@ ancestor prevents fullyProven status.
   (uses := ["base_axiom"])]
 theorem foundation : True := by trivial
 
--- nat_identity: ready status, depends on foundation
-@[blueprint "nat_identity" (ready := true)
+-- nat_identity: wip status, depends on foundation
+@[blueprint "nat_identity" (wip := true)
   (title := "Natural Number Identity")
-  (message := "Ready for formalization — proof strategy is clear")
+  (message := "Work in progress — proof strategy is clear")
   (statement := /-- The identity element for natural number addition.
 
   For all $n \in \mathbb{N}$, we have $n + 0 = n$.
@@ -130,8 +132,8 @@ This branch tests the Lean `axiom` keyword and demonstrates
 how axioms integrate into the dependency graph.
 -/
 
--- set_basics: ready status, depends on foundation
-@[blueprint "set_basics" (ready := true)
+-- set_basics: wip status, depends on foundation
+@[blueprint "set_basics" (wip := true)
   (title := "Set Theory Basics")
   (misc := "Placeholder for set-theoretic foundations")
   (statement := /-- Basic set membership properties.

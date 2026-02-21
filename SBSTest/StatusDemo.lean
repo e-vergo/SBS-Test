@@ -33,6 +33,14 @@ Merging:
                 disjunction_intro (auto-computed, all ancestors clean)
   axiom:        choice_axiom (auto-detected from Lean `axiom` keyword)
   mathlibReady: mathlib_ready (manual flag)
+
+## Dependency Inference
+
+All edges are inferred from real Lean expression-level references.
+The `uses` attribute has been removed; dependencies are established
+by having declarations actually reference each other in types or proofs.
+The only edge that cannot be inferred is foundation → base_axiom,
+since base_axiom is a TeX-only node with no Lean declaration.
 -/
 import Dress
 import Mathlib.Tactic
@@ -61,8 +69,7 @@ ancestor prevents fullyProven status.
   \uses{base_axiom} -/)
   (proof := /-- Immediate from the trivial tactic. -/)
   (below := /-- The foundation lemma is a prerequisite for both the
-  arithmetic chain (Branch A) and the set theory chain (Branch B). -/)
-  (uses := ["base_axiom"])]
+  arithmetic chain (Branch A) and the set theory chain (Branch B). -/)]
 theorem foundation : True := by trivial
 
 -- nat_identity: wip status, depends on foundation
@@ -75,10 +82,11 @@ theorem foundation : True := by trivial
   This is ready to be formalized but awaits upstream work.
 
   \uses{foundation} -/)
-  (proof := /-- By reflexivity of natural number addition with zero. -/)
-  (uses := ["foundation"])]
+  (proof := /-- By reflexivity of natural number addition with zero. -/)]
 theorem nat_identity : ∀ n : Nat, n + 0 = n := by
-  intro n; rfl
+  intro n
+  have := foundation
+  rfl
 
 -- add_zero: sorry status, depends on nat_identity
 @[blueprint "add_zero"
@@ -90,10 +98,10 @@ theorem nat_identity : ∀ n : Nat, n + 0 = n := by
 
   \uses{nat_identity} -/)
   (proof := /-- Proof by induction on $n$. The base case is immediate;
-  the inductive step uses the successor property of addition. -/)
-  (uses := ["nat_identity"])]
+  the inductive step uses the successor property of addition. -/)]
 theorem add_zero : ∀ n : Nat, 0 + n = n := by
   intro n
+  have := nat_identity n
   sorry
 
 -- add_comm: sorry status, depends on add_zero
@@ -104,10 +112,10 @@ theorem add_zero : ∀ n : Nat, 0 + n = n := by
 
   \uses{add_zero} -/)
   (proof := /-- By induction on $m$, using the left identity and
-  the commutativity of the successor operation. -/)
-  (uses := ["add_zero"])]
+  the commutativity of the successor operation. -/)]
 theorem add_comm : ∀ m n : Nat, m + n = n + m := by
   intro m n
+  have := add_zero m
   sorry
 
 -- add_assoc: proven (complete proof), depends on add_comm
@@ -122,9 +130,10 @@ theorem add_comm : ∀ m n : Nat, m + n = n + m := by
 
   \uses{add_comm} -/)
   (proof := /-- We prove a simpler propositional statement that
-  suffices, using the trivial tactic. -/)
-  (uses := ["add_comm"])]
-theorem add_assoc : True := by trivial
+  suffices, using the trivial tactic. -/)]
+theorem add_assoc : True := by
+  have := @add_comm
+  trivial
 
 /-! ## Branch B: Set Theory
 
@@ -142,11 +151,13 @@ how axioms integrate into the dependency graph.
   properties of membership and containment.
 
   \uses{foundation} -/)
-  (proof := /-- Trivially true as a propositional placeholder. -/)
-  (uses := ["foundation"])]
-theorem set_basics : True := by trivial
+  (proof := /-- Trivially true as a propositional placeholder. -/)]
+theorem set_basics : True := by
+  have := foundation
+  trivial
 
 -- choice_axiom: Lean `axiom` keyword, depends on set_basics
+-- Reference set_basics in the type via a conditional that always holds
 @[blueprint "choice_axiom"
   (title := "Choice Axiom")
   (message := "Lean axiom declaration — no proof required")
@@ -156,9 +167,8 @@ theorem set_basics : True := by trivial
   This is declared as a Lean \texttt{axiom}, which Dress auto-detects
   via \texttt{ConstantInfo.axiomInfo}.
 
-  \uses{set_basics} -/)
-  (uses := ["set_basics"])]
-axiom choice_axiom : ∀ (α : Type) [Inhabited α], α
+  \uses{set_basics} -/)]
+axiom choice_axiom (_ : set_basics = set_basics) : ∀ (α : Type) [Inhabited α], α
 
 -- elem_self: proven, depends on choice_axiom
 @[blueprint "elem_self"
@@ -170,9 +180,9 @@ axiom choice_axiom : ∀ (α : Type) [Inhabited α], α
 
   \uses{choice_axiom} -/)
   (proof := /-- By the identity function on proofs:
-  introduce $P$ and its proof $h$, then return $h$ directly. -/)
-  (uses := ["choice_axiom"])]
+  introduce $P$ and its proof $h$, then return $h$ directly. -/)]
 theorem elem_self : ∀ (P : Prop), P → P := by
+  have := @choice_axiom
   intro P h; exact h
 
 -- subset_refl: proven, depends on elem_self
@@ -183,10 +193,10 @@ theorem elem_self : ∀ (P : Prop), P → P := by
   Represented propositionally as $P \land P \to P$.
 
   \uses{elem_self} -/)
-  (proof := /-- Extract the left component of the conjunction. -/)
-  (uses := ["elem_self"])]
+  (proof := /-- Extract the left component of the conjunction. -/)]
 theorem subset_refl : ∀ (P : Prop), P ∧ P → P := by
-  intro P ⟨h, _⟩; exact h
+  intro P ⟨h, _⟩
+  exact elem_self P h
 
 /-! ## Branch C: Logic (Fully Provable Chain)
 
@@ -213,11 +223,10 @@ theorem proven_leaf : ∀ (P : Prop), P → P := by
   (statement := /-- Transitivity: if $P \to Q$ and $Q \to R$ then $P \to R$.
 
   \uses{proven_leaf} -/)
-  (proof := /-- Chain the two implications by function composition. -/)
-  (uses := ["proven_leaf"])]
+  (proof := /-- Chain the two implications by function composition. -/)]
 theorem imp_trans : ∀ (P Q R : Prop), (P → Q) → (Q → R) → (P → R) := by
   intro P Q R hPQ hQR hP
-  exact hQR (hPQ hP)
+  exact hQR (proven_leaf Q (hPQ hP))
 
 -- weakening: depends only on imp_trans → auto fullyProven
 @[blueprint "weakening"
@@ -226,10 +235,10 @@ theorem imp_trans : ∀ (P Q R : Prop), (P → Q) → (Q → R) → (P → R) :=
 
   \uses{imp_trans} -/)
   (proof := /-- Introduce $P$, $Q$, and a proof of $P$.
-  Discard the hypothesis of $Q$ and return the proof of $P$. -/)
-  (uses := ["imp_trans"])]
+  Discard the hypothesis of $Q$ and return the proof of $P$. -/)]
 theorem weakening : ∀ (P Q : Prop), P → (Q → P) := by
-  intro P Q hP _hQ; exact hP
+  intro P Q hP _hQ
+  exact imp_trans P P P (fun x => x) (fun x => x) hP
 
 -- contrapositive: depends only on imp_trans → auto fullyProven
 @[blueprint "contrapositive"
@@ -238,11 +247,11 @@ theorem weakening : ∀ (P Q : Prop), P → (Q → P) := by
 
   \uses{imp_trans} -/)
   (proof := /-- Given $h : P \to Q$ and $hnq : \neg Q$, assume $hp : P$.
-  Then $h(hp) : Q$ contradicts $hnq$. -/)
-  (uses := ["imp_trans"])]
+  Then $h(hp) : Q$ contradicts $hnq$. -/)]
 theorem contrapositive : ∀ (P Q : Prop), (P → Q) → (¬Q → ¬P) := by
   intro P Q h hnq hp
-  exact hnq (h hp)
+  have hq := imp_trans P P Q (fun x => x) h hp
+  exact hnq hq
 
 -- disjunction_intro: depends on contrapositive + weakening → diamond → auto fullyProven
 @[blueprint "disjunction_intro"
@@ -254,10 +263,12 @@ theorem contrapositive : ∀ (P Q : Prop), (P → Q) → (¬Q → ¬P) := by
   \texttt{imp\_trans}, and this node depends on both.
 
   \uses{contrapositive, weakening} -/)
-  (proof := /-- Apply the left injection into the disjunction. -/)
-  (uses := ["contrapositive", "weakening"])]
+  (proof := /-- Apply the left injection into the disjunction. -/)]
 theorem disjunction_intro : ∀ (P Q : Prop), P → P ∨ Q := by
-  intro P _Q hP; exact Or.inl hP
+  intro P _Q hP
+  have := @contrapositive
+  have := @weakening
+  exact Or.inl hP
 
 /-! ## Merging: Cross-Branch Dependencies
 
@@ -277,9 +288,10 @@ with diamond patterns and cross-branch dependencies.
   this node depends on both.
 
   \uses{add_assoc, subset_refl} -/)
-  (proof := /-- Split the conjunction and prove each component trivially. -/)
-  (uses := ["add_assoc", "subset_refl"])]
+  (proof := /-- Split the conjunction and prove each component trivially. -/)]
 theorem core_theorem : True ∧ True := by
+  have := add_assoc
+  have := @subset_refl
   exact ⟨trivial, trivial⟩
 
 -- synthesis: merges core_theorem (A+B) with weakening (C)
@@ -291,9 +303,10 @@ theorem core_theorem : True ∧ True := by
   (Branch C), connecting all parts of the dependency graph.
 
   \uses{core_theorem, weakening} -/)
-  (proof := /-- The disjunction $\top \lor \bot$ holds by left injection. -/)
-  (uses := ["core_theorem", "weakening"])]
+  (proof := /-- The disjunction $\top \lor \bot$ holds by left injection. -/)]
 theorem synthesis : True ∨ False := by
+  have := core_theorem
+  have := @weakening
   exact Or.inl trivial
 
 -- advanced_composition: extends synthesis
@@ -303,9 +316,9 @@ theorem synthesis : True ∨ False := by
   (statement := /-- An advanced composition extending the synthesis.
 
   \uses{synthesis} -/)
-  (proof := /-- Direct consequence of the synthesis result. -/)
-  (uses := ["synthesis"])]
-theorem advanced_composition : True := by trivial
+  (proof := /-- Direct consequence of the synthesis result. -/)]
+theorem advanced_composition : True := by
+  exact synthesis.elim (fun h => h) (fun h => h.elim)
 
 -- main_result: the main result of the project
 @[blueprint "main_result"
@@ -319,9 +332,10 @@ theorem advanced_composition : True := by trivial
   and the fully proven chain (via synthesis $\to$ weakening).
 
   \uses{synthesis} -/)
-  (proof := /-- Follows directly from synthesis. -/)
-  (uses := ["synthesis"])]
-theorem main_result : True := by trivial
+  (proof := /-- Follows directly from synthesis. -/)]
+theorem main_result : True := by
+  have := synthesis
+  trivial
 
 -- mathlib_ready: on the clean chain, mathlibReady status
 @[blueprint "mathlib_ready" (mathlibReady := true)
@@ -336,9 +350,9 @@ theorem main_result : True := by trivial
 
   \uses{weakening} -/)
   (proof := /-- By universal instantiation: introduce $P$, then
-  prove $P \lor P$ from any proof of $P$ via left injection. -/)
-  (uses := ["weakening"])]
+  prove $P \lor P$ from any proof of $P$ via left injection. -/)]
 theorem mathlib_ready : ∀ (P : Prop), P → P ∨ P := by
-  intro P hP; exact Or.inl hP
+  intro P hP
+  exact Or.inl (weakening P P hP hP)
 
 end SBSTest.StatusDemo

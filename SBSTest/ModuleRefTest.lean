@@ -25,7 +25,6 @@ def firstDef : Nat := 42
 @[blueprint "mod:second"
   (title := "Module Test Second")
   (statement := /-- Second declaration, depends on the first. \uses{mod:first} -/)
-  (uses := ["mod:first"])
   (proof := /-- A simple proof. -/)]
 theorem secondThm : firstDef = 42 := rfl
 
